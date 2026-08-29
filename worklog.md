@@ -312,3 +312,19 @@ Stage Summary:
 - 6 AI tools backed by server API routes using z-ai-web-dev-sdk (image gen, content writer, image describer, chat, summarizer, translator).
 - All other tools are 100% client-side (privacy-first, no uploads).
 - Cron job scheduled for 15-min webDevReview to continue QA & feature expansion.
+
+---
+Task ID: FIX-1
+Agent: Main (Z.ai Code)
+Task: Fix Radix UI hydration mismatch on tool pages.
+
+Work Log:
+- User reported hydration mismatch error on /tools/qr-code-generator: Radix-generated IDs differed between server (`radix-_R_9k...`) and client (`radix-_R_2c...`) for Tabs/Select triggers.
+- Root cause: `next/dynamic` lazy-loads tool components, but with SSR enabled the server renders the real component while React's `useId()` produces different IDs than the client (component tree order differs between SSR fallback pass and client hydration pass).
+- Fix: added a `dyn` helper in `/src/components/tool-loader.tsx` that calls `dynamic(loader, { ssr: false })` for ALL 88 tool imports. The ToolPageShell (breadcrumb, title, related tools) still server-renders; only the interactive tool body hydrates on the client.
+- Verified with agent-browser across 7 Radix-heavy tools (json-formatter, base64-encode-decode, bmi-calculator, ai-image-generator, temperature-converter, percentage-calculator, timestamp-converter): zero hydration errors, zero console mismatches.
+- Lint: 0 errors, 0 warnings. Dev log: all routes return 200 with no errors.
+
+Stage Summary:
+- Hydration mismatch RESOLVED. All tool pages now load cleanly without ID mismatches.
+- Pattern established: interactive client-only components loaded via `next/dynamic` should use `{ ssr: false }` to avoid Radix/React `useId` hydration issues.

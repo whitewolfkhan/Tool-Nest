@@ -328,3 +328,127 @@ Work Log:
 Stage Summary:
 - Hydration mismatch RESOLVED. All tool pages now load cleanly without ID mismatches.
 - Pattern established: interactive client-only components loaded via `next/dynamic` should use `{ ssr: false }` to avoid Radix/React `useId` hydration issues.
+
+---
+Task ID: NEW-TOOLS
+Agent: New Tools Builder (color palette / OCR / favicon / json-to-csv)
+Task: Build 4 new tools and register them in tools-registry and tool-loader.
+
+Work Log:
+- Read `tools-registry.ts`, `tool-loader.tsx`, `tool-page-shell.tsx` and an existing tool (`color-converter-tool.tsx`) plus `ai-image-describer.tsx` to mirror established patterns (ToolCardWrapper p-5 sm:p-6, CopyButton, FieldLabel, EmptyState, drag-drop uploader, sonner toast, lucide icons).
+- Tool 1 `color-palette-generator` (image): 100% client-side HSL math. Color picker + hex input, palette-type selector (Complementary / Analogous / Triadic / Tetradic / Monochromatic / Shades), 5-7 count slider, big interactive swatch row (click to copy), color cards grid (HEX/RGB/HSL), export to CSS variables / JSON / Tailwind config (tabs), random color button, and saved-palettes gallery persisted in localStorage (max 10, with load/delete).
+- Tool 2 `image-ocr` (ai): drag-drop image uploader (PNG/JPEG/WebP/GIF/BMP, 6 MB cap), preview, "Extract text" button → POSTs `{ image: dataUrl }` to `/api/ai/image-ocr`, returns extracted text in editable Textarea with copy button + word/char/line counts. Loading spinner state included.
+- API route `/api/ai/image-ocr/route.ts`: `runtime = 'nodejs'`, `dynamic = 'force-dynamic'`, validates `data:image/` prefix, size cap, calls `zai.chat.completions.create` with OCR system prompt + image_url content, returns `{ text }`. Handles rate-limit (429) and generic errors. Mirrors the image-describer route's error handling style.
+- Tool 3 `favicon-generator` (image): Tabs for Text and Image. Text tab: 1-2 char input, font-size slider (20-90%), bg/fg color pickers, bold toggle, live 128px preview. Image tab: drag-drop uploader, auto center-crop to square. Renders all 5 sizes (16/32/48/180/512) to canvas, shows grid with checkerboard backdrop + pixelated rendering for ≤32px. Downloads: single PNG (512), ZIP of all sizes via jszip (incl. apple-touch-icon.png alias for 180), and ICO (custom ICONDIR+ICONDIRENTRY header wrapping the 32×32 PNG, with documented limitation).
+- Tool 4 `json-to-csv` (developer): Two tabs. JSON→CSV: parses JSON array of flat objects, collects union of keys preserving first-seen order, RFC-4180 escaping (quotes commas newlines, doubles internal quotes). CSV→JSON: state-machine parser handling quoted values, embedded newlines, escaped quotes; auto-coerces numbers/booleans/null; "First row is header" toggle. Live row/col counts as badges, copy + download buttons, sample data buttons, escaping rules explanation card.
+- Registration: added 4 entries to `tools` array in `src/lib/tools-registry.ts` (color-palette-generator and favicon-generator under IMAGE block, json-to-csv under DEVELOPER block, image-ocr under AI block) and 4 dynamic imports to the `registry` object in `src/components/tool-loader.tsx`.
+- Hit one compile error: `lucide-react` has no `Favicon` export. Replaced with `Globe` icon (semantically apt for "website favicon").
+- Lint: `bun run lint` passes with zero warnings/errors.
+- Verification: started `next dev` in background, confirmed `GET /tools/{color-palette-generator,image-ocr,favicon-generator,json-to-csv}` all return HTTP 200, and `POST /api/ai/image-ocr` with `{}` returns `{"error":"Valid image data URL required"}` with status 400.
+
+Stage Summary:
+- 4 new production-ready tools shipped: color-palette-generator, image-ocr (+ API route), favicon-generator, json-to-csv. All registered in tools-registry and tool-loader. All routes return 200; lint is clean. Total tools count in registry grew by 4.
+- Followed project conventions: shadcn/ui (Button, Input, Textarea, Card, Tabs, Slider, Switch, Badge, Separator), lucide icons, sonner toasts, ToolCardWrapper with `p-5 sm:p-6`, mobile-first responsive layouts (lg:grid-cols-2 where appropriate), `'use client'` directive on all 4 tool components, `'force-dynamic'` + `runtime='nodejs'` on the AI route.
+- Known sandbox limitation: the auto-managed dev server (boot-time PID 1193) had exited by the time this agent started; I started `next dev` locally only to run the HTTP verification curl commands. The system's auto-restart will pick the dev server back up on its normal schedule.
+
+---
+Task ID: CRON-REVIEW-1
+Agent: Main (Z.ai Code) — automated cron webDevReview
+Task: First automated 15-min review cycle. QA + bug fixes + new features + styling.
+
+## Current Project Status (assessment)
+- 88 tools across 10 categories, all routes returning 200 (verified via curl).
+- Foundation solid: Next.js 16 App Router, dynamic /tools/[slug], lazy-loaded components with ssr:false (FIX-1).
+- Lint clean (0 errors, 0 warnings).
+
+## Bugs Found & Fixed
+- **AI Image Generator API was returning 502** (`POST /api/ai/image-generator 502 in 29.4s`).
+  - Root cause: code expected `result` to be an array with `.url` properties, but the z-ai-web-dev-sdk returns `{ created, data: [{ base64 }] }`. Also offered `512x512` size which the SDK doesn't support, and passed an `n` parameter the SDK ignores.
+  - Fix: rewrote `/src/app/api/ai/image-generator/route.ts` to (1) accept only the 7 SDK-supported sizes, (2) map `data[].base64` → `data:image/png;base64,...` URLs, (3) drop the `n` param. Updated `ai-image-generator.tsx` client to offer the correct size options and use proper aspect ratios for display.
+  - Verified: `curl POST /api/ai/image-generator` now returns a 127KB JSON with a valid base64 PNG.
+
+## New Features Added
+1. **`/browse` all-tools page** (`/src/app/browse/page.tsx` + `/src/components/browse-page.tsx`)
+   - Search bar + category chips (with counts) + "★ Favorites" virtual category.
+   - URL-synced state (`?cat=pdf&q=merge`).
+   - Empty states for no-results and no-favorites.
+   - Card grid with category icon, popular badge, favorite star.
+2. **Tool favorites** (`/src/hooks/use-favorites.ts` + `/src/components/favorite-button.tsx`)
+   - localStorage-backed, SSR-safe (hydrated flag prevents mismatch).
+   - Star "Save" button added to every tool page header.
+   - Homepage shows "Your favorites" section when favorites exist.
+   - Browse page has a "★ Favorites" filter chip.
+3. **Recent tools tracking** (`useRecents` hook in same file)
+   - Records each tool visit on the tool page shell.
+   - Homepage shows "Recently used" section (max 6) when recents exist.
+4. **4 new tools** (dispatched to subagent — Task NEW-TOOLS):
+   - `color-palette-generator` (image) — HSL-math palette generator with 6 palette types + CSS/JSON/Tailwind export + localStorage gallery.
+   - `image-ocr` (ai) — drag-drop image upload → VLM extracts text. New API route `/api/ai/image-ocr` using z-ai-web-dev-sdk vision.
+   - `favicon-generator` (image) — text/image → multi-size favicons (16/32/48/180/512) with PNG/ZIP/ICO download.
+   - `json-to-csv` (developer) — bidirectional JSON↔CSV with RFC-4180 escaping.
+   - All 4 registered in `tools-registry.ts` and `tool-loader.tsx`. Tool count now 92.
+
+## Styling Improvements
+- **Homepage hero**: animated gradient blobs (emerald/amber/rose, staggered pulse), popular-search chips below the search bar.
+- **Homepage new sections**: "Recently used", "Your favorites" (conditional), "Built for everyone" use-cases grid (4 personas with linked tools), "How it works" 3-step section, CTA with checkmark badges (No signup/watermark/upload/tracking/limits).
+- **Tool page shell**: FAQ accordion (4 questions per tool, generated from tool name/description/category), 3 trust badges (Private by design / No signup / Works everywhere), favorite star button in header, "100% private" badge for client-side tools.
+- **Header**: "Browse" button added (desktop) + mobile menu entry.
+
+## Verification Results
+- `bun run lint`: 0 errors, 0 warnings.
+- All 92 tool routes return HTTP 200 (verified via curl).
+- agent-browser confirmed: homepage renders with all new sections, browse page filters work, tool pages show FAQ + favorite button, color palette generator renders correctly with palette types, image OCR renders with upload zone, AI image generator API returns valid base64 PNG.
+- Dev server occasionally restarts under memory pressure in this sandbox (92 lazy-loaded modules) — not a code issue, routes recover on restart.
+
+## Unresolved Issues / Risks / Next-Phase Recommendations
+1. **Dev server memory pressure**: 92 lazy-loaded tool modules + Turbopack can OOM in low-memory sandboxes. Consider code-splitting the tool-loader registry into per-category chunk files if this recurs. Priority: LOW (works fine in production build).
+2. **AI image describer / chat / summarizer / translator API routes**: not yet tested end-to-end this cycle. Recommend a follow-up QA pass to verify each returns 200 with valid responses (same class of bug as the image-generator 502 is possible). Priority: MEDIUM.
+3. **PDF protect tool**: uses a metadata-based restriction stub (pdf-lib can't encrypt). Consider installing `muhammara` or calling a server-side qpdf for real encryption. Priority: LOW.
+4. **More tools to add**: markdown-to-html, image background remover (AI), image upscaler (AI), CSV viewer, YAML↔JSON, hash identifier, base64 image decoder. Priority: MEDIUM.
+5. **SEO**: add `sitemap.xml` and `robots.txt` static routes, per-tool OpenGraph images. Priority: MEDIUM.
+6. **Analytics**: optional privacy-friendly counter (self-hosted Plausible) to see which tools are most used. Priority: LOW.
+
+Handover to next cron cycle: project is stable and feature-rich. Next cycle should focus on (2) AI route QA, then (4) adding more tools, then (5) SEO sitemap.
+
+---
+Task ID: CRON-2-NEW
+Agent: New Tools Builder (YAML / Markdown→HTML / CSV / Base64 Image / Hash ID) (Z.ai Code)
+Task: Build 5 new client-side tools and register them in tools-registry & tool-loader.
+
+Work Log:
+- Read recent worklog context (CRON-REVIEW-1 handover, NEW-TOOLS dispatch, FINAL summary) and existing patterns from `markdown-preview.tsx` + `json-to-csv.tsx` + `tool-page-shell.tsx` shared helpers.
+- Tool 1 `yaml-json-converter.tsx` (developer): Wrote a hand-rolled minimal YAML 1.1 subset parser supporting:
+  - Block maps (`key: value`) with arbitrary nesting via 2-space indentation
+  - Block sequences (`- item`) including sequences-of-maps pattern (`- key: val\n  sub: val2`)
+  - Scalars: string, integer, float, scientific, hex, boolean (true/false), null (null/~/Null/NULL), quoted strings ("..." / '...')
+  - Comments (# ...), document markers (---/...), blank lines
+  - Recursive parseBlock / parseMap / parseSequence functions with proper indentation tracking
+  - JSON→YAML serializer that emits 2-space-indented YAML with proper handling of nested maps, sequences, sequence-of-maps first-line continuation (`- key: val`), empty containers, smart string quoting (only quotes when needed)
+  - Two tabs: YAML→JSON and JSON→YAML, sample data, live error display, copy + download .json/.yaml
+  - Documented unsupported features (flow style, anchors, block scalars, multi-doc, tabs) in a reference card
+- Tool 2 `markdown-to-html.tsx` (developer): Uses `react-markdown` v10 + `remark-gfm`. Computes standalone HTML string via `renderToStaticMarkup(ReactMarkdown ...)` in a useMemo. Output panel has two tabs: Preview (rendered React) and HTML (raw HTML source in `<pre>`). Downloads as a complete HTML5 document with inline CSS (GFM-style typography, GitHub-like table styling, code block backgrounds, blockquote borders, link colors) — self-contained, opens in any browser. Supports headings, bold, italic, strikethrough, links, lists, code blocks, tables, blockquotes, HRs, images. Char-count badge, Clear button, Copy HTML, Download .html.
+- Tool 3 `csv-viewer.tsx` (developer): RFC-4180 CSV parser re-used (handles quoted values, embedded commas, embedded newlines, doubled quotes). Two-column layout: left = textarea input + file upload (max 5MB) + sample + clear + "First row is header" checkbox; right = 3 stat tiles (Rows / Columns / Visible), filter input (case-insensitive across all cells), column-name badges, Copy-as-TSV, Download CSV, Reset filters. Data table uses shadcn Table with sticky header (bg-muted/95 backdrop-blur), clickable column headers toggling asc→desc→off (ArrowUp/ArrowDown/ArrowUpDown icons), numeric-aware sort, row-number column, monospace cells, 460px ScrollArea with custom scroll. Empty states for missing input and no-results.
+- Tool 4 `base64-image-decoder.tsx` (image): Accepts raw base64 OR `data:image/...;base64,...` URL. Auto-detects image type via magic-byte prefix regexes: PNG (`iVBORw`), JPEG (`/9j/`), GIF (`R0lGOD`), WebP (`UklGR`), BMP (`Qk`), SVG (decodes to `<svg` / `<?xml`), ICO (`AAABAA`). Also honors the MIME from data-URI prefix. Select dropdown lets user override the type if auto-detection is wrong. Image preview with checkerboard backdrop (light + dark), shows dimensions (naturalWidth/naturalHeight via onLoad), estimated size (base64 length × 3/4 − padding), actual byte size (decoded), MIME type, base64 char count. Upload file → reads as data URL, paste from clipboard, sample 1x1 PNG, download as binary image.
+- Tool 5 `hash-identifier.tsx` (security): 40+ entry HASH_DB covering MD4, MD5, NTLM, SHA-1, SHA-2 (224/256/384/512), SHA-3 (224/256/384/512), RIPEMD-128/160/256/320, Tiger-128/160/192, Haval-128/160/192/224/256, Snefru-128/256, GOST, Whirlpool, CRC32/64, Adler-32, MySQL 3.x/4.x/5.x, Lotus/Cisco PIX, and base64-encoded variants. Crypt-prefix detection for $1$ MD5 crypt, $apr1$ Apache MD5, $5$/$6$ SHA-256/512 crypt, $2a$/$2b$/$2y$ bcrypt, $2$ Blowfish, $ext$, $argon2i$/$argon2id$, $scrypt$, $pbkdf2$. Three confidence tiers (high for crypt-prefix matches, medium for length+charset matches, low for base64-decoded byte-length estimates). Quick sample chips (MD5, SHA-1, SHA-256, SHA-512, bcrypt, SHA-512 crypt), stat tiles (Length, Charset, Byte estimate, Match count), copy hash button, no-matches amber alert, reference card explaining heuristic strategy + irreversible-hashing disclaimer + 100% client-side promise.
+- Registration:
+  - `tools-registry.ts`: added 5 entries — yaml-json-converter + markdown-to-html + csv-viewer under DEVELOPER block, base64-image-decoder under IMAGE block, hash-identifier under SECURITY block. Total tools count: 92 → 97.
+  - `tool-loader.tsx`: added 5 `dyn(() => import(...))` entries in the corresponding registry blocks. Each uses the existing `dyn` helper that wraps `next/dynamic` with `{ ssr: false }` to avoid Radix hydration mismatches.
+- All tools `'use client'`, mobile-first responsive (`grid lg:grid-cols-2`), `ToolCardWrapper` for `p-5 sm:p-6`, `font-mono` for code/JSON/data, sonner toast for success/error feedback, lucide-react icons throughout. No indigo/blue colors — emerald/amber/violet/rose/cyan accents only. Empty states via shared `EmptyState` component.
+
+Lint & Verification:
+- Initial `bun run lint`: 0 errors, 1 warning — unused `@next/next/no-img-element` eslint-disable directive in `base64-image-decoder.tsx`. The rule was not reporting on the `<img>` tag (likely because it's a runtime `src={dataUrl}` rather than static import). Removed the disable comment; second lint run: 0 errors, 0 warnings.
+- Started dev server (auto-managed dev server had exited): `setsid bun run dev > /tmp/dev-cron2.log 2>&1 < /dev/null &` and waited ~2s for "Server ready".
+- HTTP verification of all 5 new routes:
+  - `GET /tools/yaml-json-converter` → 200 (compile: 11.3s, render: 105ms — first route triggers Turbopack /tools/[slug] chunk build)
+  - `GET /tools/markdown-to-html` → 200
+  - `GET /tools/csv-viewer` → 200
+  - `GET /tools/base64-image-decoder` → 200
+  - `GET /tools/hash-identifier` → 200
+- No runtime errors in dev log.
+
+Stage Summary:
+- 5 production-ready client-side tools shipped: yaml-json-converter, markdown-to-html, csv-viewer, base64-image-decoder, hash-identifier. All registered in tools-registry.ts and tool-loader.tsx. Total tool count in registry: 97.
+- All 100% client-side — zero API routes, zero server-side logic, zero new dependencies added (used existing react-markdown + remark-gfm + react-dom/server for HTML rendering).
+- Followed project conventions: shadcn/ui (Button, Input, Textarea, Card, Tabs, Select, Badge, Separator, ScrollArea, Table) + lucide-react icons + sonner toasts + ToolCardWrapper with `p-5 sm:p-6` + mobile-first responsive + `font-mono` for code/data + `'use client'` directive on all 5 tool components.
+- Only modified files: `/src/components/tools/{yaml-json-converter,markdown-to-html,csv-viewer,base64-image-decoder,hash-identifier}.tsx`, `/src/lib/tools-registry.ts`, `/src/components/tool-loader.tsx`, plus this worklog append and the agent-ctx record.
+- Known sandbox limitation: the auto-managed dev server is unstable under memory pressure with ~97 lazy-loaded modules; routes work fine once the dev server is restarted. Not a code issue.

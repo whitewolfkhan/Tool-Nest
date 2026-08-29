@@ -21,7 +21,32 @@ import {
 } from '@/components/tool-page-shell'
 import { toast } from 'sonner'
 
-type Size = '512x512' | '1024x1024'
+// Sizes supported by the z-ai-web-dev-sdk image generation API.
+type Size =
+  | '1024x1024'
+  | '768x1344'
+  | '864x1152'
+  | '1344x768'
+  | '1152x864'
+  | '1440x720'
+  | '720x1440'
+
+const SIZE_OPTIONS: { value: Size; label: string; aspect: 'square' | 'portrait' | 'landscape' }[] = [
+  { value: '1024x1024', label: '1024 × 1024 (Square, HD)', aspect: 'square' },
+  { value: '768x1344', label: '768 × 1344 (Portrait 9:16)', aspect: 'portrait' },
+  { value: '864x1152', label: '864 × 1152 (Portrait 3:4)', aspect: 'portrait' },
+  { value: '1344x768', label: '1344 × 768 (Landscape 16:9)', aspect: 'landscape' },
+  { value: '1152x864', label: '1152 × 864 (Landscape 4:3)', aspect: 'landscape' },
+  { value: '1440x720', label: '1440 × 720 (Landscape 2:1)', aspect: 'landscape' },
+  { value: '720x1440', label: '720 × 1440 (Portrait 1:2)', aspect: 'portrait' },
+]
+
+function aspectClass(size: Size) {
+  const opt = SIZE_OPTIONS.find((o) => o.value === size)
+  if (opt?.aspect === 'portrait') return 'aspect-[3/4]'
+  if (opt?.aspect === 'landscape') return 'aspect-[4/3]'
+  return 'aspect-square'
+}
 
 interface GeneratedImage {
   id: string
@@ -83,7 +108,7 @@ export default function AiImageGenerator() {
       const res = await fetch('/api/ai/image-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: trimmed, size, n: 1 }),
+        body: JSON.stringify({ prompt: trimmed, size }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -148,8 +173,11 @@ export default function AiImageGenerator() {
                 <SelectValue placeholder="Select size" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="512x512">512 × 512 (square, fast)</SelectItem>
-                <SelectItem value="1024x1024">1024 × 1024 (square, HD)</SelectItem>
+                {SIZE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -227,7 +255,7 @@ export default function AiImageGenerator() {
                 <img
                   src={img.url}
                   alt={img.prompt}
-                  className="w-full aspect-square object-cover bg-muted"
+                  className={`w-full ${aspectClass(img.size)} object-cover bg-muted`}
                 />
                 <div className="p-3 space-y-2">
                   <p className="text-xs text-muted-foreground line-clamp-2">

@@ -4,7 +4,7 @@ import ZAI from 'z-ai-web-dev-sdk'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const MAX_BYTES = 6 * 1024 * 1024 // ~6 MB
+const MAX_BYTES = 6 * 1024 * 1024 // ~6 MB base64-equivalent
 
 function isRateLimit(err: unknown): boolean {
   const msg = (err as Error)?.message?.toLowerCase() ?? ''
@@ -18,25 +18,16 @@ export async function POST(req: NextRequest) {
 
     if (typeof image !== 'string' || !image.startsWith('data:image/')) {
       return Response.json(
-        { error: 'A valid base64 image data URL is required.' },
+        { error: 'Valid image data URL required' },
         { status: 400 }
       )
     }
     if (image.length > MAX_BYTES * 1.4) {
-      // base64 is ~33% larger than the raw bytes
       return Response.json(
         { error: 'Image is too large. Please use an image under 6 MB.' },
         { status: 413 }
       )
     }
-
-    const system =
-      'You are a careful visual analyst. Describe the image in rich, accurate detail. ' +
-      'Respond in plain prose (no markdown, no headings, no JSON). ' +
-      'Cover: (1) a concise caption summarising the image, ' +
-      '(2) the key objects, people, or subjects visible, ' +
-      '(3) the dominant colors and lighting, and (4) the overall mood or atmosphere. ' +
-      'Keep the description focused and avoid speculation.'
 
     const zai = await ZAI.create()
     // NOTE: must use createVision (not create) when the message contains an
@@ -45,11 +36,17 @@ export async function POST(req: NextRequest) {
     const completion = await zai.chat.completions.createVision({
       model: 'glm-4v-flash',
       messages: [
-        { role: 'system', content: system },
+        {
+          role: 'system',
+          content:
+            'You are an OCR assistant. Extract ALL text visible in the image. ' +
+            'Return only the extracted text, preserving line breaks and structure. ' +
+            'If no text is present, respond with "No text detected in this image."',
+        },
         {
           role: 'user',
           content: [
-            { type: 'text', text: 'Describe this image in detail.' },
+            { type: 'text', text: 'Extract all text from this image.' },
             { type: 'image_url', image_url: { url: image } },
           ],
         },
@@ -57,18 +54,10 @@ export async function POST(req: NextRequest) {
       thinking: { type: 'disabled' },
     })
 
-    const description = completion.choices[0]?.message?.content?.trim() ?? ''
-    if (!description) {
-      return Response.json(
-        { error: 'The model returned an empty description. Please try again.' },
-        { status: 502 }
-      )
-    }
-
-    return Response.json({ description })
+    const text = completion.choices[0]?.message?.content ?? ''
+    return Response.json({ text })
   } catch (e) {
-    const err = e as Error
-    if (isRateLimit(err)) {
+    if (isRateLimit(e)) {
       return Response.json(
         {
           error:
@@ -78,7 +67,7 @@ export async function POST(req: NextRequest) {
       )
     }
     return Response.json(
-      { error: err.message || 'Failed to describe image.' },
+      { error: (e as Error).message || 'Failed to extract text from image.' },
       { status: 500 }
     )
   }

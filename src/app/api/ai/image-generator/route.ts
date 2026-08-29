@@ -4,7 +4,17 @@ import ZAI from 'z-ai-web-dev-sdk'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const VALID_SIZES = ['512x512', '1024x1024'] as const
+// Per SDK types (CreateImageGenerationBody): supported sizes are
+// 1024x1024, 768x1344, 864x1152, 1344x768, 1152x864, 1440x720, 720x1440.
+const VALID_SIZES = [
+  '1024x1024',
+  '768x1344',
+  '864x1152',
+  '1344x768',
+  '1152x864',
+  '1440x720',
+  '720x1440',
+] as const
 type ImageSize = (typeof VALID_SIZES)[number]
 
 function isRateLimit(err: unknown): boolean {
@@ -17,7 +27,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const prompt: unknown = body?.prompt
     const size: unknown = body?.size
-    const n: unknown = body?.n
 
     if (typeof prompt !== 'string' || !prompt.trim()) {
       return Response.json(
@@ -37,20 +46,23 @@ export async function POST(req: NextRequest) {
         ? (size as ImageSize)
         : '1024x1024'
 
-    const resolvedN = typeof n === 'number' && n >= 1 && n <= 4 ? Math.floor(n) : 1
-
     const zai = await ZAI.create()
     const result = await zai.images.generations.create({
       prompt: prompt.trim(),
       size: resolvedSize,
-      n: resolvedN,
     })
 
-    const images = (Array.isArray(result) ? result : []).map((r) => ({
-      url: (r as { url?: string }).url ?? '',
-    }))
+    // SDK returns: { created, data: [{ base64 }] }
+    const dataArray = (result as { data?: Array<{ base64?: string }> }).data ?? []
+    const images = dataArray
+      .map((r) => {
+        const b64 = r.base64 ?? ''
+        if (!b64) return null
+        return { url: `data:image/png;base64,${b64}` }
+      })
+      .filter((x): x is { url: string } => x !== null)
 
-    if (!images.length || !images[0].url) {
+    if (!images.length) {
       return Response.json(
         { error: 'Image generation returned no results. Please try again.' },
         { status: 502 }

@@ -3,22 +3,48 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, Copy, Check, Download, ArrowLeft } from 'lucide-react'
+import {
+  ChevronRight,
+  Copy,
+  Check,
+  Download,
+  ArrowLeft,
+  Shield,
+  Zap,
+  Info,
+} from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import {
   getToolBySlug,
   getCategoryById,
   getToolsByCategory,
 } from '@/lib/tools-registry'
+import { FavoriteButton } from '@/components/favorite-button'
+import { useRecents } from '@/hooks/use-favorites'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 interface ToolPageShellProps {
   slug: string
   children: React.ReactNode
+}
+
+/** Records a visit to this tool slug on mount (for the "recently used" section). */
+function VisitRecorder({ slug }: { slug: string }) {
+  const { add } = useRecents()
+  React.useEffect(() => {
+    add(slug)
+  }, [slug, add])
+  return null
 }
 
 export function ToolPageShell({ slug, children }: ToolPageShellProps) {
@@ -43,13 +69,17 @@ export function ToolPageShell({ slug, children }: ToolPageShellProps) {
     .slice(0, 6)
   const Icon = category?.icon
 
+  const faq = generateFaq(tool.name, tool.description, category?.name ?? 'tools', tool.clientSide)
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+      <VisitRecorder slug={slug} />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-muted-foreground mb-4 flex-wrap">
         <Link href="/" className="hover:text-foreground">Home</Link>
         <ChevronRight className="h-3 w-3" />
-        <Link href={`/#${tool.category}`} className="hover:text-foreground">{category?.name}</Link>
+        <Link href={`/browse?cat=${tool.category}`} className="hover:text-foreground">{category?.name}</Link>
         <ChevronRight className="h-3 w-3" />
         <span className="text-foreground font-medium truncate">{tool.name}</span>
       </nav>
@@ -75,9 +105,16 @@ export function ToolPageShell({ slug, children }: ToolPageShellProps) {
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl font-bold tracking-tight">{tool.name}</h1>
             <Badge variant="secondary">{category?.name}</Badge>
+            {tool.clientSide && (
+              <Badge variant="outline" className="gap-1 border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
+                <Shield className="h-3 w-3" />
+                100% private
+              </Badge>
+            )}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">{tool.description}</p>
         </div>
+        <FavoriteButton slug={slug} />
       </div>
 
       <Separator className="mb-6" />
@@ -85,9 +122,50 @@ export function ToolPageShell({ slug, children }: ToolPageShellProps) {
       {/* Tool content */}
       <div className="mb-10">{children}</div>
 
+      {/* Trust badges row */}
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <TrustBadge
+          icon={Shield}
+          title="Private by design"
+          text={tool.clientSide
+            ? 'Runs entirely in your browser. Your data never touches a server.'
+            : 'Processed securely on our servers and discarded after use.'}
+          color="text-emerald-500"
+        />
+        <TrustBadge
+          icon={Zap}
+          title="No signup, no limits"
+          text="Use this tool as many times as you want. Forever free, no watermark."
+          color="text-amber-500"
+        />
+        <TrustBadge
+          icon={Info}
+          title="Works everywhere"
+          text="Modern browser is all you need — desktop, tablet, or mobile."
+          color="text-cyan-500"
+        />
+      </div>
+
+      {/* FAQ */}
+      <div className="mt-10 border-t border-border pt-8">
+        <h2 className="text-lg font-semibold mb-3">Frequently asked questions</h2>
+        <Accordion type="single" collapsible className="w-full">
+          {faq.map((q, i) => (
+            <AccordionItem key={i} value={`q-${i}`}>
+              <AccordionTrigger className="text-left text-sm sm:text-base">
+                {q.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-muted-foreground">
+                {q.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+
       {/* Related tools */}
       {related.length > 0 && (
-        <div className="mt-12 border-t border-border pt-8">
+        <div className="mt-10 border-t border-border pt-8">
           <h2 className="text-lg font-semibold mb-3">Related tools</h2>
           <div className="flex flex-wrap gap-2">
             {related.map((t) => (
@@ -104,6 +182,56 @@ export function ToolPageShell({ slug, children }: ToolPageShellProps) {
       )}
     </div>
   )
+}
+
+function TrustBadge({
+  icon: Icon,
+  title,
+  text,
+  color,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  text: string
+  color: string
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-card/50 p-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary">
+        <Icon className={cn('h-4 w-4', color)} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-medium leading-tight">{title}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{text}</p>
+      </div>
+    </div>
+  )
+}
+
+/** Generate a small FAQ specific to the tool. */
+function generateFaq(name: string, description: string, category: string, clientSide?: boolean) {
+  return [
+    {
+      q: `Is the ${name} really free?`,
+      a: `Yes — ${name} is 100% free with no signup, no watermark, and no limits. Use it as many times as you like.`,
+    },
+    {
+      q: clientSide
+        ? `Are my files or data uploaded to a server?`
+        : `How is my data handled?`,
+      a: clientSide
+        ? `No. ${name} runs entirely in your browser using modern web APIs (Canvas, WebAssembly, Web Crypto). Your input never leaves your device — that means total privacy and instant results.`
+        : `${name} uses our secure backend API to process your request. We do not store your inputs after the response is returned.`,
+    },
+    {
+      q: `Does ${name} work on mobile?`,
+      a: `Yes. All our ${category.toLowerCase()} are designed mobile-first and work on any modern browser — phone, tablet, or desktop.`,
+    },
+    {
+      q: `Do I need to install anything?`,
+      a: `No installation required. Just open this page in a modern browser (Chrome, Firefox, Safari, Edge) and you're ready to go.`,
+    },
+  ]
 }
 
 /* Shared utility components for tool pages */

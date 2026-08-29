@@ -38,6 +38,9 @@ const registry: Record<string, React.ComponentType> = {
   'image-metadata': dyn(() => import('@/components/tools/image-metadata')),
   'color-picker': dyn(() => import('@/components/tools/color-picker')),
   'image-color-palette': dyn(() => import('@/components/tools/image-color-palette')),
+  'color-palette-generator': dyn(() => import('@/components/tools/color-palette-generator')),
+  'favicon-generator': dyn(() => import('@/components/tools/favicon-generator')),
+  'base64-image-decoder': dyn(() => import('@/components/tools/base64-image-decoder')),
 
   // TEXT
   'word-counter': dyn(() => import('@/components/tools/word-counter')),
@@ -68,6 +71,10 @@ const registry: Record<string, React.ComponentType> = {
   'js-minifier': dyn(() => import('@/components/tools/js-minifier')),
   'html-formatter': dyn(() => import('@/components/tools/html-formatter')),
   'timestamp-converter': dyn(() => import('@/components/tools/timestamp-converter')),
+  'json-to-csv': dyn(() => import('@/components/tools/json-to-csv')),
+  'yaml-json-converter': dyn(() => import('@/components/tools/yaml-json-converter')),
+  'markdown-to-html': dyn(() => import('@/components/tools/markdown-to-html')),
+  'csv-viewer': dyn(() => import('@/components/tools/csv-viewer')),
 
   // CONVERTER
   'unit-converter': dyn(() => import('@/components/tools/unit-converter')),
@@ -104,6 +111,7 @@ const registry: Record<string, React.ComponentType> = {
   'random-string-generator': dyn(() => import('@/components/tools/random-string-generator')),
   'credit-card-validator': dyn(() => import('@/components/tools/credit-card-validator')),
   'mac-address-lookup': dyn(() => import('@/components/tools/mac-address-lookup')),
+  'hash-identifier': dyn(() => import('@/components/tools/hash-identifier')),
 
   // MISC
   'qr-code-generator': dyn(() => import('@/components/tools/qr-code-generator')),
@@ -122,6 +130,7 @@ const registry: Record<string, React.ComponentType> = {
   'ai-chat-assistant': dyn(() => import('@/components/tools/ai-chat-assistant')),
   'ai-summarizer': dyn(() => import('@/components/tools/ai-summarizer')),
   'ai-translator': dyn(() => import('@/components/tools/ai-translator')),
+  'image-ocr': dyn(() => import('@/components/tools/image-ocr')),
 }
 
 export function ToolLoader({ slug }: { slug: string }) {

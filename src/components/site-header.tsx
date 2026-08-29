@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, Wrench, Menu, X } from 'lucide-react'
+import { Search, Wrench, Menu, X, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -92,6 +92,12 @@ export function SiteHeader() {
           <Badge variant="secondary" className="hidden lg:inline-flex">
             {totalToolsCount}+ tools
           </Badge>
+          <Link href="/browse" className="hidden sm:block">
+            <Button variant="ghost" size="sm" className="gap-1.5">
+              <LayoutGrid className="h-4 w-4" />
+              Browse
+            </Button>
+          </Link>
           <ThemeToggle />
           <Button
             variant="ghost"
@@ -148,6 +154,9 @@ export function SiteHeader() {
           <div className="grid gap-2">
             <Link href="/" onClick={() => setMobileOpen(false)}>
               <Button variant="outline" className="w-full justify-start">Home</Button>
+            </Link>
+            <Link href="/browse" onClick={() => setMobileOpen(false)}>
+              <Button variant="outline" className="w-full justify-start">Browse All Tools</Button>
             </Link>
             <Link href="/#categories" onClick={() => setMobileOpen(false)}>
               <Button variant="outline" className="w-full justify-start">Browse Categories</Button>

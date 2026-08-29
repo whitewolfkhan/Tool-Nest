@@ -141,6 +141,9 @@ export const tools: Tool[] = [
   { slug: 'image-metadata', name: 'Image EXIF Viewer', description: 'View EXIF metadata of images', category: 'image', clientSide: true, keywords: ['exif', 'metadata', 'camera'] },
   { slug: 'color-picker', name: 'Color Picker from Image', description: 'Pick colors from any image', category: 'image', clientSide: true, keywords: ['eyedropper', 'rgb', 'hex'] },
   { slug: 'image-color-palette', name: 'Image Color Palette', description: 'Extract dominant colors from image', category: 'image', clientSide: true, keywords: ['extract', 'palette', 'dominant'] },
+  { slug: 'color-palette-generator', name: 'Color Palette Generator', description: 'Generate beautiful color palettes from a base color', category: 'image', popular: false, clientSide: true, keywords: ['color', 'palette', 'css', 'design'] },
+  { slug: 'favicon-generator', name: 'Favicon Generator', description: 'Create favicons from text or image', category: 'image', clientSide: true, keywords: ['favicon', 'icon', 'website'] },
+  { slug: 'base64-image-decoder', name: 'Base64 to Image', description: 'Decode Base64 string to image preview', category: 'image', clientSide: true, keywords: ['base64', 'image', 'decode'] },
 
   // ===== TEXT =====
   { slug: 'word-counter', name: 'Word Counter', description: 'Count words, characters, sentences, paragraphs', category: 'text', popular: true, clientSide: true, keywords: ['count', 'characters', 'length'] },
@@ -171,6 +174,10 @@ export const tools: Tool[] = [
   { slug: 'js-minifier', name: 'JavaScript Minifier', description: 'Minify JavaScript code', category: 'developer', clientSide: true, keywords: ['compress', 'minify'] },
   { slug: 'html-formatter', name: 'HTML Formatter', description: 'Beautify HTML code', category: 'developer', clientSide: true, keywords: ['prettify', 'beautify'] },
   { slug: 'timestamp-converter', name: 'Timestamp Converter', description: 'Convert Unix timestamp to date', category: 'developer', clientSide: true, keywords: ['unix', 'epoch', 'time'] },
+  { slug: 'json-to-csv', name: 'JSON to CSV Converter', description: 'Convert JSON to CSV and back', category: 'developer', popular: false, clientSide: true, keywords: ['json', 'csv', 'convert'] },
+  { slug: 'yaml-json-converter', name: 'YAML ↔ JSON Converter', description: 'Convert between YAML and JSON formats', category: 'developer', clientSide: true, keywords: ['yaml', 'json', 'convert', 'config'] },
+  { slug: 'markdown-to-html', name: 'Markdown to HTML', description: 'Convert Markdown to standalone HTML', category: 'developer', clientSide: true, keywords: ['markdown', 'html', 'convert'] },
+  { slug: 'csv-viewer', name: 'CSV Viewer', description: 'View, sort and filter CSV data as a table', category: 'developer', clientSide: true, keywords: ['csv', 'table', 'data', 'sort'] },
 
   // ===== CONVERTER =====
   { slug: 'unit-converter', name: 'Unit Converter', description: 'Length, weight, temperature, volume', category: 'converter', popular: true, clientSide: true, keywords: ['metric', 'imperial'] },
@@ -207,6 +214,7 @@ export const tools: Tool[] = [
   { slug: 'random-string-generator', name: 'Random String Generator', description: 'Generate random strings', category: 'security', clientSide: true, keywords: ['random', 'token'] },
   { slug: 'credit-card-validator', name: 'Credit Card Validator', description: 'Validate card numbers with Luhn', category: 'security', clientSide: true, keywords: ['luhn', 'card'] },
   { slug: 'mac-address-lookup', name: 'MAC Address Lookup', description: 'Find vendor from MAC address', category: 'security', clientSide: true, keywords: ['vendor', 'network'] },
+  { slug: 'hash-identifier', name: 'Hash Identifier', description: 'Identify hash types from a hash string', category: 'security', clientSide: true, keywords: ['hash', 'identify', 'md5', 'sha'] },
 
   // ===== MISC =====
   { slug: 'qr-code-generator', name: 'QR Code Generator', description: 'Create QR codes for URLs, text, Wi-Fi', category: 'misc', popular: true, clientSide: true, keywords: ['barcode', 'qr'] },
@@ -225,6 +233,7 @@ export const tools: Tool[] = [
   { slug: 'ai-chat-assistant', name: 'AI Chat Assistant', description: 'Chat with AI assistant', category: 'ai', popular: true, clientSide: false, keywords: ['chat', 'assistant'] },
   { slug: 'ai-summarizer', name: 'AI Text Summarizer', description: 'Summarize long text into key points', category: 'ai', clientSide: false, keywords: ['summarize', 'tl;dr'] },
   { slug: 'ai-translator', name: 'AI Translator', description: 'Translate text between languages', category: 'ai', clientSide: false, keywords: ['translate', 'language'] },
+  { slug: 'image-ocr', name: 'Image OCR (Text Extractor)', description: 'Extract text from images using AI', category: 'ai', popular: false, clientSide: false, keywords: ['ocr', 'text', 'extract', 'vision'] },
 ]
 
 // Helper functions

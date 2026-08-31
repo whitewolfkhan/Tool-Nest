@@ -452,3 +452,52 @@ Stage Summary:
 - Followed project conventions: shadcn/ui (Button, Input, Textarea, Card, Tabs, Select, Badge, Separator, ScrollArea, Table) + lucide-react icons + sonner toasts + ToolCardWrapper with `p-5 sm:p-6` + mobile-first responsive + `font-mono` for code/data + `'use client'` directive on all 5 tool components.
 - Only modified files: `/src/components/tools/{yaml-json-converter,markdown-to-html,csv-viewer,base64-image-decoder,hash-identifier}.tsx`, `/src/lib/tools-registry.ts`, `/src/components/tool-loader.tsx`, plus this worklog append and the agent-ctx record.
 - Known sandbox limitation: the auto-managed dev server is unstable under memory pressure with ~97 lazy-loaded modules; routes work fine once the dev server is restarted. Not a code issue.
+
+---
+Task ID: FIX-UI-1
+Agent: Main (Z.ai Code)
+Task: Fix gradient-text rendering as solid blocks (UI bug reported by user).
+
+## Bug Description
+User uploaded a screenshot showing the homepage with broken UI:
+- The hero headline "all in one place" was rendering as a solid green-to-orange gradient rectangle instead of readable text.
+- The 4 stats numbers (88+, 10, Free, None) were also rendering as solid gradient blocks hiding the text.
+
+## Root Cause
+The `.gradient-text` CSS utility class used the `background-clip: text` + `-webkit-text-fill-color: transparent` technique. This technique is fragile:
+- `@supports (background-clip: text)` returns TRUE in many browsers (including headless Chromium used for screenshots) because the browser *parses* the property.
+- But the actual RENDERING of `-webkit-background-clip: text` was failing — the background was NOT being clipped to the text glyphs.
+- Meanwhile `-webkit-text-fill-color: transparent` WAS being honored, making the text invisible.
+- Result: invisible text + full gradient background rectangle = solid colored block where text should be.
+
+Inspected computed styles via agent-browser eval:
+```
+webkitBackgroundClip: "border-box"   ← WRONG, should be "text"
+webkitTextFillColor: "rgba(0, 0, 0, 0)" ← transparent (text invisible)
+backgroundImage: "linear-gradient(...)"
+```
+
+## Fix
+Rewrote `.gradient-text` in `/src/app/globals.css` to NOT use `background-clip: text` at all. Instead it uses a solid `color: var(--primary)` with `background: none` and `-webkit-text-fill-color: currentcolor`. This guarantees the text is always readable. The gradient visual effect is intentionally dropped in favor of reliability.
+
+```css
+.gradient-text {
+  color: var(--primary);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentcolor;
+}
+```
+
+## Verification
+- agent-browser eval on the hero headline `h1 .gradient-text` now shows:
+  - `color: lab(57.89...)` (primary emerald, visible)
+  - `webkitTextFillColor: lab(57.89...)` (visible)
+  - `backgroundImage: none`
+- VLM analysis of new screenshot confirms: "headline fully readable as text" + "all 4 stats visible and readable as text" + "no solid colored gradient blocks hiding text".
+- Lint: 0 errors, 0 warnings.
+
+## Stage Summary
+- UI bug RESOLVED. The homepage hero headline and stats numbers are now readable text instead of solid gradient blocks.
+- Lesson learned: `background-clip: text` is unreliable across rendering contexts (headless browsers, screenshot pipelines, some WebViews). For critical text, prefer solid colors. Reserve gradient text for purely decorative use cases where invisibility is acceptable.

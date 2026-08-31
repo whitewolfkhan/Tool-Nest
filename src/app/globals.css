@@ -147,17 +147,22 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     opacity: 0.8;
   }
-  /* Gradient text utility */
+  /* Gradient text utility.
+     NOTE: background-clip: text is unreliable across rendering contexts
+     (headless browsers, screenshot pipelines, some mobile WebViews report
+     support via @supports but render a solid gradient block instead of
+     clipping to glyphs). To guarantee text is ALWAYS readable, we use a
+     solid primary color by default and only enable the gradient clip when
+     the browser also reports a working -webkit-text-fill-color that is
+     actually transparent — which we can't detect reliably, so we keep the
+     safe solid color. The gradient effect is intentionally disabled to
+     prevent invisible-text bugs. */
   .gradient-text {
-    background: linear-gradient(
-      135deg,
-      var(--primary) 0%,
-      oklch(0.6 0.2 70) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: var(--primary);
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -webkit-text-fill-color: currentcolor;
   }
   /* Subtle grid background pattern */
   .bg-grid {

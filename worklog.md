@@ -665,3 +665,38 @@ Work Log:
 
 Stage Summary:
 - Professional README.md added at project root. Covers all aspects of the project comprehensively. Lint clean.
+
+---
+Task ID: MARKDOWN-TO-PDF
+Agent: Main (Z.ai Code)
+Task: Add Markdown to PDF tool with high-quality PDF formatting.
+
+Work Log:
+- Created /src/components/tools/markdown-to-pdf.tsx (Markdown → PDF converter).
+- Features:
+  - Markdown editor (Textarea) with sample document on first load.
+  - Live preview tab using react-markdown + remark-gfm, rendered via renderToStaticMarkup.
+  - PDF generation via hidden iframe + browser native print (highest quality — uses Chrome's PDF engine).
+  - HTML download fallback.
+  - PDF settings: page size (A4/Letter), page margins (5-40mm slider), font family (4 options: Georgia serif, Helvetica sans, Times, Courier mono), font size (8-16pt slider), line height (1.0-2.2 slider).
+  - Live badges showing current settings.
+  - Tips card with guidance for great-looking PDFs.
+- PDF formatting quality (the @page CSS + print styles):
+  - @page rule with proper size + margins.
+  - H1 with emerald underline accent, H2 with subtle border divider.
+  - Headings have `page-break-after: avoid` so they don't get stranded.
+  - Tables and code blocks have `page-break-inside: avoid` so they don't split across pages.
+  - Orphans/widows control (3/3) for paragraphs.
+  - Blockquotes with emerald left-accent bar + light green background.
+  - Inline code with rose color on muted background.
+  - Fenced code blocks with dark slate background (#0f172a) + light text.
+  - Tables with zebra striping, bordered cells, bold headers.
+  - Links in teal brand color.
+  - `print-color-adjust: exact` so backgrounds print correctly.
+- Registered in tools-registry.ts (popular: true, category: developer) and tool-loader.tsx.
+- Verified: route returns HTTP 200, tool renders with editor + sample content + Download PDF button + tabs + settings, no console errors, lint clean.
+
+Stage Summary:
+- Markdown to PDF tool added. Total tools now 122 (was 121).
+- PDF output is high-quality: proper typography, headings hierarchy, code blocks, tables, blockquotes, page-break controls, customizable page size/margins/fonts.
+- Uses browser native print engine (best PDF quality, no heavy dependencies like jsPDF or pdfkit).

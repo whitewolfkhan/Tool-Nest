@@ -188,6 +188,7 @@ export const tools: Tool[] = [
   { slug: 'json-to-csv', name: 'JSON to CSV Converter', description: 'Convert JSON to CSV and back', category: 'developer', popular: false, clientSide: true, keywords: ['json', 'csv', 'convert'] },
   { slug: 'yaml-json-converter', name: 'YAML ↔ JSON Converter', description: 'Convert between YAML and JSON formats', category: 'developer', clientSide: true, keywords: ['yaml', 'json', 'convert', 'config'] },
   { slug: 'markdown-to-html', name: 'Markdown to HTML', description: 'Convert Markdown to standalone HTML', category: 'developer', clientSide: true, keywords: ['markdown', 'html', 'convert'] },
+  { slug: 'markdown-to-pdf', name: 'Markdown to PDF', description: 'Convert Markdown to a beautifully formatted PDF', category: 'developer', popular: true, clientSide: true, keywords: ['markdown', 'pdf', 'convert', 'print'] },
   { slug: 'csv-viewer', name: 'CSV Viewer', description: 'View, sort and filter CSV data as a table', category: 'developer', clientSide: true, keywords: ['csv', 'table', 'data', 'sort'] },
   { slug: 'css-gradient-generator', name: 'CSS Gradient Generator', description: 'Visual tool to create CSS gradients', category: 'developer', clientSide: true, keywords: ['css', 'gradient', 'design', 'background'] },
   { slug: 'box-shadow-generator', name: 'Box Shadow Generator', description: 'Visual tool to create CSS box shadows', category: 'developer', clientSide: true, keywords: ['css', 'box-shadow', 'design', 'shadow'] },

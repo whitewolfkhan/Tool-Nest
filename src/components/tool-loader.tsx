@@ -85,6 +85,7 @@ const registry: Record<string, React.ComponentType> = {
   'json-to-csv': dyn(() => import('@/components/tools/json-to-csv')),
   'yaml-json-converter': dyn(() => import('@/components/tools/yaml-json-converter')),
   'markdown-to-html': dyn(() => import('@/components/tools/markdown-to-html')),
+  'markdown-to-pdf': dyn(() => import('@/components/tools/markdown-to-pdf')),
   'csv-viewer': dyn(() => import('@/components/tools/csv-viewer')),
   'css-gradient-generator': dyn(() => import('@/components/tools/css-gradient-generator')),
   'box-shadow-generator': dyn(() => import('@/components/tools/box-shadow-generator')),

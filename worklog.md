@@ -638,3 +638,30 @@ Stage Summary:
 - New tools span 4 categories: Developer (8 new), Image (2 new), Text (1 new), PDF (1 new).
 - All 100% client-side, lint clean, all routes return 200, browse page reflects new counts.
 - Developer Tools category is now the largest at 28 tools.
+
+---
+Task ID: README
+Agent: Main (Z.ai Code)
+Task: Create professional README.md for the ToolNest project.
+
+Work Log:
+- Gathered project info: 121 tools, 10 categories, 7 AI API routes, tech stack (Next.js 16, TS 5, Tailwind 4, shadcn/ui, z-ai-web-dev-sdk).
+- Created /home/z/my-project/README.md (344 lines) with the following sections:
+  - Header with project title and tagline
+  - Features overview (8 key points)
+  - Tool catalog table (10 categories with counts and examples)
+  - Getting Started (prerequisites, installation, dev, build)
+  - Tech Stack table (11 technologies)
+  - Project Structure (annotated directory tree)
+  - Architecture (tool registration system, dynamic routing, client-side processing, SEO)
+  - AI Tools table (7 endpoints)
+  - Design System (color palette, typography, layout)
+  - Scripts table
+  - Adding a New Tool (3-step guide with code example)
+  - Browser Support table
+  - Privacy section
+  - License + Acknowledgments
+- Verified lint still passes (0 errors, 0 warnings).
+
+Stage Summary:
+- Professional README.md added at project root. Covers all aspects of the project comprehensively. Lint clean.

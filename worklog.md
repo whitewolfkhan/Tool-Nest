@@ -501,3 +501,75 @@ Rewrote `.gradient-text` in `/src/app/globals.css` to NOT use `background-clip: 
 ## Stage Summary
 - UI bug RESOLVED. The homepage hero headline and stats numbers are now readable text instead of solid gradient blocks.
 - Lesson learned: `background-clip: text` is unreliable across rendering contexts (headless browsers, screenshot pipelines, some WebViews). For critical text, prefer solid colors. Reserve gradient text for purely decorative use cases where invisibility is acceptable.
+
+---
+Task ID: MORE-TOOLS
+Agent: More Tools Builder (12 new client-side tools) (Z.ai Code)
+Task: Build 12 new client-side tools (text-to-speech, speech-to-text, password-strength-analyzer, image-to-favicon-set, color-shade-generator, css-gradient-generator, box-shadow-generator, qr-code-reader, invoice-generator, text-repeater, word-frequency-counter, image-collage-maker) and register them in tools-registry & tool-loader.
+
+Work Log:
+- Read context: last worklog entries (CRON-2-NEW, FIX-UI-1), tools-registry.ts (97 tools), tool-loader.tsx (97 lazy imports), tool-page-shell.tsx (shared helpers: CopyButton, DownloadButton, ToolCardWrapper, EmptyState, FieldLabel), color-palette-generator.tsx (HSL math reference pattern).
+- Tool 1 `text-to-speech.tsx` (text): Uses `window.speechSynthesis` + `SpeechSynthesisUtterance`. Async voice loading via `onvoiceschanged` event. Voice selector populated from `getVoices()` with name + lang + Local/Default badges. Rate (0.5–2), Pitch (0–2), Volume (0–1) sliders with icons. Play/Pause/Resume/Stop/Clear buttons. Live word highlighting via `onboundary` event using `<mark>` with primary tint. Character + word count, max 4000 chars. Limitations panel noting no audio download support and Chrome/Edge word-boundary behavior.
+- Tool 2 `speech-to-text.tsx` (text): Uses `window.SpeechRecognition || window.webkitSpeechRecognition`. Language selector with 21 common languages. Start/Stop recording buttons. Continuous + interim results. Live transcript textarea (editable) merges final + interim text with a caret indicator. Microphone-permission error handling. Browser-support notes (Chrome/Edge best, Firefox limited, Safari). Word + char count badges. Copy + Clear buttons.
+- Tool 3 `password-strength-analyzer.tsx` (security): Show/hide password toggle with Eye/EyeOff icons. Composition analysis: length, unique chars, charset size, entropy bits, char-class checks (A-Z, a-z, 0-9, !@#) shown as green check / strikethrough badges. 100-common-password built-in list check ("password", "123456", "qwerty", etc.). Pattern detection: sequential alpha ("abc"), sequential digits ("123"), repeated chars ("aaa"), keyboard walks ("qwerty", "asdf"), year patterns (19xx/20xx). Four crack-time estimates with icons: online 10³/s, slow hash 10⁴/s, fast hash 10¹⁰/s, GPU array 10¹²/s, with human-readable durations ("instant" → "centuries"). Score 0-4 with color-coded progress bar (rose/orange/amber/emerald/emerald-600). Specific recommendations list with green check / amber X markers. Entropy formula documented.
+- Tool 4 `image-to-favicon-set.tsx` (image): Drag-drop / click image upload. Canvas cover-fit drawing at 10 sizes (16, 32, 48, 64, 96, 180, 192, 256, 384, 512). Optional background fill for transparent PNGs. Grid preview of each size on checkerboard backdrop. ZIP download via jszip containing: individual PNGs named `favicon-{size}x{size}.png`, `apple-touch-icon.png`, `android-chrome-{size}x{size}.png`, `favicon.ico` (manually-built ICO wrapper around the 32×32 PNG with proper ICONDIR/ICONDIRENTRY headers + DataView), `site.webmanifest`, and a sample `index.html` with link tags. Copyable HTML snippet (`<link rel="icon">` tags).
+- Tool 5 `color-shade-generator.tsx` (image): HSL math (hexToRgb, rgbToHsl, hslToRgb). 11-step Tailwind-like scale (50–950) with target lightness values per step. Four modes: "Tints & Shades" (default), "Lighten only" (tints), "Darken only" (shades), "Hue variations" (rotates hue ±60° while keeping S/L). Big interactive swatch bar with hover-expand + click-to-copy. Grid of swatches showing HEX, RGB, HSL with click-to-copy + checkmark. Export as CSS variables / JSON / Tailwind config object, with download. Random color button. Base color picker + hex input.
+- Tool 6 `css-gradient-generator.tsx` (developer): Linear/Radial/Conic gradient types via Tabs. Up to 5 color stops (add/remove) with per-stop color picker, hex input, and position slider. Linear: angle slider 0-360° with rotating visual indicator dial. Radial/Conic: center X/Y position sliders. Live large preview rectangle. Generated CSS code with copy button (`background: linear-gradient(135deg, #10B981 0%, #F59E0B 100%);`). 10 preset gradients gallery (Emerald Glow, Sunset, Lime Punch, Rose Quartz, Violet Dream, Cyan Sky, Mango Tango conic, Forest Radial, Twilight, Coral Bloom) — click to load. Reset to default button.
+- Tool 7 `box-shadow-generator.tsx` (developer): Multiple shadow layers (up to 5) with active-layer selector. Sliders for X offset, Y offset, blur, spread, opacity per layer. Color picker + hex input. Inset toggle (Switch). Live preview on a 32×32 box with checkerboard backdrop + adjustable box color. Generated CSS code (`box-shadow: 0px 4px 6px -1px rgba(0,0,0,0.20);`) with copy. 6 preset shadows (Subtle, Medium, Large, Neon with emerald glow, Inset, Layered) — click to load with preset box colors. Reset button.
+- Tool 8 `qr-code-reader.tsx` (misc): Native `BarcodeDetector` API (no third-party libs). Image upload via drag-drop, click, or paste (Ctrl+V). Camera scanning: opens `getUserMedia({ video: { facingMode: 'environment' }})` and continuously scans via `requestAnimationFrame` loop, drawing video to hidden canvas and calling `detector.detect()`. Scanning indicator with animated emerald scan line. Decoded result in editable textarea with copy button + auto-detected "Open link" button if URL. 20-item session history with format badge and timestamp, click to re-load. Amber warning panel if BarcodeDetector unsupported. Browser-support notes.
+- Tool 9 `invoice-generator.tsx` (misc): Bill-from + bill-to sections (name, address, email), invoice #, date, due date. Currency selector (12 currencies: $, €, £, ¥, ₹, C$, A$, R$, CHF, ₽, ₩). Tax rate %. Dynamic line items with editable Table (description, qty, unit price, auto-calc amount). Live subtotal / tax / total display. Notes field. "Print / Save PDF" button opens new window with styled HTML invoice (emerald-themed header, brand title, parties, line-item table, totals section, notes card) and auto-triggers `window.print()` — user can pick "Save as PDF" destination. HTML escaping for safety.
+- Tool 10 `text-repeater.tsx` (text): Textarea input + slider (1-100) + numeric input (1-10000) for repeat count. Separator selector: newline, space, comma, comma+space, tab, custom. Custom separator input field. "Number each repetition" toggle (1. text, 2. text, ...). "Trim whitespace" toggle. Live output Textarea with copy + download .txt. Char / word / line count badges. Warning if output > 100K chars.
+- Tool 11 `word-frequency-counter.tsx` (text): Tokenize via `/[A-Za-z0-9']+/g`. Options: case-sensitive toggle, exclude-stopwords toggle (110-word English stopword list), min word length input. Recharts BarChart of top 20 words (emerald bars, CartesianGrid, rotated XAxis labels, custom Tooltip). Frequency table with rank, word, count, percentage, and a horizontal bar visualization (relative to top word). Total words + unique words badges. Copy CSV + Download CSV buttons. Sticky table header.
+- Tool 12 `image-collage-maker.tsx` (image): Multi-image drag-drop upload. 5 layout selectors: 2×2 grid, 3×3 grid, horizontal strip (2-8), vertical strip (2-8), 1 big + 2 small (3 images). Gap slider (0-40px), canvas size slider (480-2160px), background color picker + hex input. Canvas cover-fit drawing with cell clipping (image fills cell minus gap, no overflow). Live preview via toDataURL. Thumbnail list with up/down reorder arrows + delete button on hover. Download PNG button.
+
+Registration:
+- `tools-registry.ts`: added 12 entries — text-to-speech, speech-to-text, text-repeater, word-frequency-counter in TEXT block; password-strength-analyzer in SECURITY block; image-to-favicon-set, color-shade-generator, image-collage-maker in IMAGE block; css-gradient-generator, box-shadow-generator in DEVELOPER block; qr-code-reader, invoice-generator in MISC block. Total tools count: 97 → 109.
+- `tool-loader.tsx`: added 12 `dyn(() => import(...))` entries in the corresponding registry blocks (TEXT, SECURITY, IMAGE, DEVELOPER, MISC). Each uses the existing `dyn` helper that wraps `next/dynamic` with `{ ssr: false }`.
+
+Lint & Verification:
+- Initial `bun run lint`: 0 errors, 7 warnings — all unused eslint-disable directives (no-console, react-hooks/exhaustive-deps) in image-to-favicon-set.tsx, qr-code-reader.tsx, speech-to-text.tsx, text-to-speech.tsx. Removed all disable comments; second lint run: 1 error — `react-hooks/refs` rule complaining about `finalRef.current = finalText` accessed during render in speech-to-text.tsx. Removed the unused `finalRef` entirely (was leftover from an earlier approach). Third lint run: 0 errors, 0 warnings.
+- Dev server was already running (PID 1059, port 3000) — did not need to start it.
+- HTTP verification of all 12 new routes (first request triggers Turbopack /tools/[slug] chunk build, e.g. `text-to-speech` took 26.4s compile on first hit; subsequent routes compiled in 5-40ms):
+  - `GET /tools/text-to-speech` → 200 (compile: 26.0s)
+  - `GET /tools/speech-to-text` → 200
+  - `GET /tools/password-strength-analyzer` → 200
+  - `GET /tools/image-to-favicon-set` → 200
+  - `GET /tools/color-shade-generator` → 200
+  - `GET /tools/css-gradient-generator` → 200
+  - `GET /tools/box-shadow-generator` → 200
+  - `GET /tools/qr-code-reader` → 200
+  - `GET /tools/invoice-generator` → 200
+  - `GET /tools/text-repeater` → 200
+  - `GET /tools/word-frequency-counter` → 200
+  - `GET /tools/image-collage-maker` → 200
+- No runtime errors in dev log.
+
+Stage Summary:
+- 12 production-ready client-side tools shipped: text-to-speech, speech-to-text, password-strength-analyzer, image-to-favicon-set, color-shade-generator, css-gradient-generator, box-shadow-generator, qr-code-reader, invoice-generator, text-repeater, word-frequency-counter, image-collage-maker. All registered in tools-registry.ts and tool-loader.tsx. Total tool count in registry: 97 → 109.
+- All 100% client-side — zero API routes, zero server-side logic, zero new dependencies added (used existing jszip + recharts + shadcn/ui + lucide-react + sonner).
+- Followed project conventions: shadcn/ui (Button, Input, Textarea, Card, Tabs, Select, Switch, Checkbox, Label, Badge, Separator, Slider, ScrollArea, Table, Progress, Tooltip) + lucide-react icons + sonner toasts + ToolCardWrapper with `p-5 sm:p-6` + mobile-first responsive + `font-mono` for code/data + `'use client'` directive on all 12 tool components.
+- Color policy respected: NO indigo/blue. Primary emerald, with accents in amber, rose, violet, cyan, orange, pink, lime, teal.
+- No use of `.gradient-text` CSS class (known bug). Used `text-primary` and category colors for emphasis.
+- Only modified files: `/src/components/tools/{12 new files}.tsx`, `/src/lib/tools-registry.ts`, `/src/components/tool-loader.tsx`, plus this worklog append and the agent-ctx record.
+- Special features: 4 attack scenarios for password crack time; BarcodeDetector API for QR reading (no extra deps); manually-built ICO file format with DataView; multi-layer box shadows; 4 color-shade modes; 5 collage layouts with image reordering; print-window approach for invoice PDF (no jsPDF needed).
+
+---
+Task ID: MORE-TOOLS-VERIFY
+Agent: Main (Z.ai Code)
+Task: Verify the 12 new tools added by subagent and confirm integration.
+
+Work Log:
+- Confirmed tool count in registry: 94 → 109 (12 new tools added).
+- Ran `bun run lint` → 0 errors, 0 warnings.
+- agent-browser smoke tested 4 representative new tools:
+  - /tools/css-gradient-generator → 200, 0 errors, correct title
+  - /tools/box-shadow-generator → 200, 0 errors, correct title
+  - /tools/text-to-speech → 200, 0 errors, correct title
+  - /tools/image-collage-maker → 200, 0 errors, correct title
+- Verified /browse page shows updated category counts: All 109, Image 16, Text 16, Developer 20, Security 6, Misc 10.
+
+Stage Summary:
+- 12 new tools successfully integrated and verified. Total tool count now 109.
+- New tools span 5 categories: Text (4), Image (3), Developer (2), Security (1), Misc (2).
+- All 100% client-side, no new dependencies, no indigo/blue colors, no .gradient-text class usage.
+- Lint clean, all routes return 200, browse page reflects new counts.

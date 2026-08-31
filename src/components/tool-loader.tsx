@@ -41,6 +41,9 @@ const registry: Record<string, React.ComponentType> = {
   'color-palette-generator': dyn(() => import('@/components/tools/color-palette-generator')),
   'favicon-generator': dyn(() => import('@/components/tools/favicon-generator')),
   'base64-image-decoder': dyn(() => import('@/components/tools/base64-image-decoder')),
+  'image-to-favicon-set': dyn(() => import('@/components/tools/image-to-favicon-set')),
+  'color-shade-generator': dyn(() => import('@/components/tools/color-shade-generator')),
+  'image-collage-maker': dyn(() => import('@/components/tools/image-collage-maker')),
 
   // TEXT
   'word-counter': dyn(() => import('@/components/tools/word-counter')),
@@ -55,6 +58,10 @@ const registry: Record<string, React.ComponentType> = {
   'text-to-binary': dyn(() => import('@/components/tools/text-to-binary')),
   'text-to-morse': dyn(() => import('@/components/tools/text-to-morse')),
   'whitespace-remover': dyn(() => import('@/components/tools/whitespace-remover')),
+  'text-to-speech': dyn(() => import('@/components/tools/text-to-speech')),
+  'speech-to-text': dyn(() => import('@/components/tools/speech-to-text')),
+  'text-repeater': dyn(() => import('@/components/tools/text-repeater')),
+  'word-frequency-counter': dyn(() => import('@/components/tools/word-frequency-counter')),
 
   // DEVELOPER
   'json-formatter': dyn(() => import('@/components/tools/json-formatter')),
@@ -75,6 +82,8 @@ const registry: Record<string, React.ComponentType> = {
   'yaml-json-converter': dyn(() => import('@/components/tools/yaml-json-converter')),
   'markdown-to-html': dyn(() => import('@/components/tools/markdown-to-html')),
   'csv-viewer': dyn(() => import('@/components/tools/csv-viewer')),
+  'css-gradient-generator': dyn(() => import('@/components/tools/css-gradient-generator')),
+  'box-shadow-generator': dyn(() => import('@/components/tools/box-shadow-generator')),
 
   // CONVERTER
   'unit-converter': dyn(() => import('@/components/tools/unit-converter')),
@@ -112,6 +121,7 @@ const registry: Record<string, React.ComponentType> = {
   'credit-card-validator': dyn(() => import('@/components/tools/credit-card-validator')),
   'mac-address-lookup': dyn(() => import('@/components/tools/mac-address-lookup')),
   'hash-identifier': dyn(() => import('@/components/tools/hash-identifier')),
+  'password-strength-analyzer': dyn(() => import('@/components/tools/password-strength-analyzer')),
 
   // MISC
   'qr-code-generator': dyn(() => import('@/components/tools/qr-code-generator')),
@@ -122,6 +132,8 @@ const registry: Record<string, React.ComponentType> = {
   'random-number-generator': dyn(() => import('@/components/tools/random-number-generator')),
   'pomodoro-timer': dyn(() => import('@/components/tools/pomodoro-timer')),
   'stopwatch': dyn(() => import('@/components/tools/stopwatch')),
+  'qr-code-reader': dyn(() => import('@/components/tools/qr-code-reader')),
+  'invoice-generator': dyn(() => import('@/components/tools/invoice-generator')),
 
   // AI
   'ai-image-generator': dyn(() => import('@/components/tools/ai-image-generator')),

@@ -144,6 +144,9 @@ export const tools: Tool[] = [
   { slug: 'color-palette-generator', name: 'Color Palette Generator', description: 'Generate beautiful color palettes from a base color', category: 'image', popular: false, clientSide: true, keywords: ['color', 'palette', 'css', 'design'] },
   { slug: 'favicon-generator', name: 'Favicon Generator', description: 'Create favicons from text or image', category: 'image', clientSide: true, keywords: ['favicon', 'icon', 'website'] },
   { slug: 'base64-image-decoder', name: 'Base64 to Image', description: 'Decode Base64 string to image preview', category: 'image', clientSide: true, keywords: ['base64', 'image', 'decode'] },
+  { slug: 'image-to-favicon-set', name: 'Favicon Set Generator', description: 'Generate a complete favicon set from one image', category: 'image', clientSide: true, keywords: ['favicon', 'icons', 'website', 'manifest'] },
+  { slug: 'color-shade-generator', name: 'Color Shade Generator', description: 'Generate tints and shades of a color (50-950 scale)', category: 'image', clientSide: true, keywords: ['color', 'shade', 'tint', 'tailwind'] },
+  { slug: 'image-collage-maker', name: 'Image Collage Maker', description: 'Combine multiple images into a collage', category: 'image', clientSide: true, keywords: ['collage', 'grid', 'combine', 'images'] },
 
   // ===== TEXT =====
   { slug: 'word-counter', name: 'Word Counter', description: 'Count words, characters, sentences, paragraphs', category: 'text', popular: true, clientSide: true, keywords: ['count', 'characters', 'length'] },
@@ -158,6 +161,10 @@ export const tools: Tool[] = [
   { slug: 'text-to-binary', name: 'Text to Binary', description: 'Convert text to binary and back', category: 'text', clientSide: true, keywords: ['binary', 'ascii', 'encode'] },
   { slug: 'text-to-morse', name: 'Text to Morse Code', description: 'Encode and decode Morse code', category: 'text', clientSide: true, keywords: ['morse', 'code'] },
   { slug: 'whitespace-remover', name: 'Whitespace Remover', description: 'Remove extra spaces and blank lines', category: 'text', clientSide: true, keywords: ['trim', 'clean'] },
+  { slug: 'text-to-speech', name: 'Text to Speech', description: 'Convert text to spoken audio in your browser', category: 'text', clientSide: true, keywords: ['tts', 'audio', 'voice', 'speech'] },
+  { slug: 'speech-to-text', name: 'Speech to Text', description: 'Transcribe your voice to text using Web Speech API', category: 'text', clientSide: true, keywords: ['stt', 'voice', 'transcribe', 'dictation'] },
+  { slug: 'text-repeater', name: 'Text Repeater', description: 'Repeat text multiple times with separators', category: 'text', clientSide: true, keywords: ['repeat', 'duplicate', 'loop'] },
+  { slug: 'word-frequency-counter', name: 'Word Frequency Counter', description: 'Count frequency of each word and visualize', category: 'text', clientSide: true, keywords: ['word', 'frequency', 'count', 'analyze'] },
 
   // ===== DEVELOPER =====
   { slug: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate and minify JSON', category: 'developer', popular: true, clientSide: true, keywords: ['beautify', 'validate', 'parse'] },
@@ -178,6 +185,8 @@ export const tools: Tool[] = [
   { slug: 'yaml-json-converter', name: 'YAML ↔ JSON Converter', description: 'Convert between YAML and JSON formats', category: 'developer', clientSide: true, keywords: ['yaml', 'json', 'convert', 'config'] },
   { slug: 'markdown-to-html', name: 'Markdown to HTML', description: 'Convert Markdown to standalone HTML', category: 'developer', clientSide: true, keywords: ['markdown', 'html', 'convert'] },
   { slug: 'csv-viewer', name: 'CSV Viewer', description: 'View, sort and filter CSV data as a table', category: 'developer', clientSide: true, keywords: ['csv', 'table', 'data', 'sort'] },
+  { slug: 'css-gradient-generator', name: 'CSS Gradient Generator', description: 'Visual tool to create CSS gradients', category: 'developer', clientSide: true, keywords: ['css', 'gradient', 'design', 'background'] },
+  { slug: 'box-shadow-generator', name: 'Box Shadow Generator', description: 'Visual tool to create CSS box shadows', category: 'developer', clientSide: true, keywords: ['css', 'box-shadow', 'design', 'shadow'] },
 
   // ===== CONVERTER =====
   { slug: 'unit-converter', name: 'Unit Converter', description: 'Length, weight, temperature, volume', category: 'converter', popular: true, clientSide: true, keywords: ['metric', 'imperial'] },
@@ -215,6 +224,7 @@ export const tools: Tool[] = [
   { slug: 'credit-card-validator', name: 'Credit Card Validator', description: 'Validate card numbers with Luhn', category: 'security', clientSide: true, keywords: ['luhn', 'card'] },
   { slug: 'mac-address-lookup', name: 'MAC Address Lookup', description: 'Find vendor from MAC address', category: 'security', clientSide: true, keywords: ['vendor', 'network'] },
   { slug: 'hash-identifier', name: 'Hash Identifier', description: 'Identify hash types from a hash string', category: 'security', clientSide: true, keywords: ['hash', 'identify', 'md5', 'sha'] },
+  { slug: 'password-strength-analyzer', name: 'Password Strength Analyzer', description: 'Deep analysis of password strength and crack time', category: 'security', clientSide: true, keywords: ['password', 'strength', 'entropy', 'crack'] },
 
   // ===== MISC =====
   { slug: 'qr-code-generator', name: 'QR Code Generator', description: 'Create QR codes for URLs, text, Wi-Fi', category: 'misc', popular: true, clientSide: true, keywords: ['barcode', 'qr'] },
@@ -225,6 +235,8 @@ export const tools: Tool[] = [
   { slug: 'random-number-generator', name: 'Random Number', description: 'Generate random numbers in a range', category: 'misc', clientSide: true, keywords: ['rng', 'number'] },
   { slug: 'pomodoro-timer', name: 'Pomodoro Timer', description: 'Productivity timer with breaks', category: 'misc', clientSide: true, keywords: ['focus', 'timer'] },
   { slug: 'stopwatch', name: 'Stopwatch', description: 'Online stopwatch with laps', category: 'misc', clientSide: true, keywords: ['timer', 'count'] },
+  { slug: 'qr-code-reader', name: 'QR Code Reader', description: 'Decode QR codes from images or camera', category: 'misc', clientSide: true, keywords: ['qr', 'decode', 'scan', 'barcode'] },
+  { slug: 'invoice-generator', name: 'Invoice Generator', description: 'Create and print simple invoices', category: 'misc', clientSide: true, keywords: ['invoice', 'billing', 'pdf', 'business'] },
 
   // ===== AI =====
   { slug: 'ai-image-generator', name: 'AI Image Generator', description: 'Generate images from text prompts', category: 'ai', popular: true, clientSide: false, keywords: ['ai', 'generate', 'dalle'] },

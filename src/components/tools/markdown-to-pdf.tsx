@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { FileText, Download, Eye, Printer, Sparkles, Trash2 } from 'lucide-react'
@@ -338,22 +337,13 @@ export default function MarkdownToPdf() {
   const [fontSize, setFontSize] = React.useState(11)
   const [lineHeight, setLineHeight] = React.useState(1.6)
   const [activeTab, setActiveTab] = React.useState<'write' | 'preview'>('write')
-  const [previewHtml, setPreviewHtml] = React.useState('')
+  // Hidden ref that always renders the markdown so we can grab its HTML for PDF/HTML export.
+  // (renderToStaticMarkup from react-dom/server doesn't work in client components.)
+  const hiddenRenderRef = React.useRef<HTMLDivElement>(null)
 
-  // Render markdown to HTML whenever input changes
-  React.useEffect(() => {
-    try {
-      const element = React.createElement(
-        ReactMarkdown,
-        { remarkPlugins: [remarkGfm] },
-        markdown
-      )
-      const html = renderToStaticMarkup(element)
-      setPreviewHtml(html)
-    } catch (e) {
-      setPreviewHtml('<p style="color:#be123c">Failed to render markdown.</p>')
-    }
-  }, [markdown])
+  function getRenderedHtml(): string {
+    return hiddenRenderRef.current?.innerHTML ?? ''
+  }
 
   // Download as PDF using a hidden iframe + browser print dialog
   // This produces the highest-quality PDF because it uses the browser's
@@ -366,7 +356,12 @@ export default function MarkdownToPdf() {
 
     const css = buildPrintCss({ pageSize, margin, fontFamily, fontSize, lineHeight })
     const title = extractTitle(markdown) || 'Document'
-    const fullHtml = buildHtmlDocument(previewHtml, css, title)
+    const bodyHtml = getRenderedHtml()
+    if (!bodyHtml.trim()) {
+      toast.error('Nothing to export yet')
+      return
+    }
+    const fullHtml = buildHtmlDocument(bodyHtml, css, title)
 
     // Create a hidden iframe so we don't disturb the current page
     const iframe = document.createElement('iframe')
@@ -425,7 +420,12 @@ export default function MarkdownToPdf() {
     }
     const css = buildPrintCss({ pageSize, margin, fontFamily, fontSize, lineHeight })
     const title = extractTitle(markdown) || 'Document'
-    const fullHtml = buildHtmlDocument(previewHtml, css, title)
+    const bodyHtml = getRenderedHtml()
+    if (!bodyHtml.trim()) {
+      toast.error('Nothing to export yet')
+      return
+    }
+    const fullHtml = buildHtmlDocument(bodyHtml, css, title)
     const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -501,10 +501,11 @@ export default function MarkdownToPdf() {
           </TabsContent>
 
           <TabsContent value="preview">
-            <div
-              className="md-preview min-h-[500px] rounded-md border border-border bg-white p-6 overflow-y-auto max-h-[600px] scrollbar-thin"
-              dangerouslySetInnerHTML={{ __html: previewHtml }}
-            />
+            <div className="md-preview min-h-[500px] rounded-md border border-border bg-white p-6 overflow-y-auto max-h-[600px] scrollbar-thin">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {markdown}
+              </ReactMarkdown>
+            </div>
           </TabsContent>
         </Tabs>
       </ToolCardWrapper>
@@ -623,6 +624,17 @@ export default function MarkdownToPdf() {
       {!markdown.trim() && (
         <EmptyState message="Your markdown preview will appear here. Start typing in the editor above." />
       )}
+
+      {/* Hidden always-rendered copy of the markdown for HTML/PDF export */}
+      <div
+        ref={hiddenRenderRef}
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', top: 0, width: '800px' }}
+      >
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {markdown}
+        </ReactMarkdown>
+      </div>
     </div>
   )
 }

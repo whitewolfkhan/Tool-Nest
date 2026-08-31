@@ -700,3 +700,35 @@ Stage Summary:
 - Markdown to PDF tool added. Total tools now 122 (was 121).
 - PDF output is high-quality: proper typography, headings hierarchy, code blocks, tables, blockquotes, page-break controls, customizable page size/margins/fonts.
 - Uses browser native print engine (best PDF quality, no heavy dependencies like jsPDF or pdfkit).
+
+---
+Task ID: FIX-PREVIEW
+Agent: Main (Z.ai Code)
+Task: Fix Markdown to PDF preview not rendering.
+
+## Bug Description
+User reported: "preview don't work. i cannot see" — the Preview tab on /tools/markdown-to-pdf showed an empty area instead of rendered markdown.
+
+## Root Cause
+The component used `renderToStaticMarkup` from `react-dom/server` to convert the ReactMarkdown output to an HTML string, stored in `previewHtml` state, then rendered via `dangerouslySetInnerHTML`. 
+
+Problem: `renderToStaticMarkup` is a **server-only API**. In Next.js 16 + React 19, when imported in a `'use client'` component, it either silently returns an empty string or throws — the `previewHtml` state was never populated, so the preview div was empty.
+
+Inspected via agent-browser eval: the preview tabpanel had `childCount: 0` and `htmlLength: 0` — confirming no rendered content.
+
+## Fix
+Rewrote the component to:
+1. **Removed `renderToStaticMarkup`** import and the `useEffect` that set `previewHtml`.
+2. **Render `<ReactMarkdown>` directly** in the Preview tab's JSX (instead of `dangerouslySetInnerHTML`). This is the standard React way and always works.
+3. **Added a hidden always-rendered div** (`hiddenRenderRef`) with `position: absolute; left: -9999px` that also renders the ReactMarkdown. This div is always in the DOM (regardless of which tab is active), so the PDF/HTML export functions can read its `innerHTML` via `getRenderedHtml()`.
+
+## Verification
+- agent-browser eval confirmed: Preview tabpanel now has `childCount: 1`, `hasH1: true`, `hasH2: true`, `hasTable: true`, `hasPre: true`, `hasBlockquote: true`.
+- Hidden render div has 15 child elements and 1661 chars of HTML.
+- VLM screenshot analysis confirmed: "Rendered markdown content" visible.
+- No console errors or hydration warnings.
+- Lint clean.
+
+Stage Summary:
+- Preview bug RESOLVED. The Markdown to PDF tool's Preview tab now shows fully rendered markdown (headings, paragraphs, lists, tables, code blocks, blockquotes).
+- PDF download still works via the hidden render ref's innerHTML.

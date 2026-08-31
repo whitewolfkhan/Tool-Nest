@@ -573,3 +573,68 @@ Stage Summary:
 - New tools span 5 categories: Text (4), Image (3), Developer (2), Security (1), Misc (2).
 - All 100% client-side, no new dependencies, no indigo/blue colors, no .gradient-text class usage.
 - Lint clean, all routes return 200, browse page reflects new counts.
+
+---
+Task ID: MORE-TOOLS-2
+Agent: MORE-TOOLS-2 — 12 New Client-Side Tools Builder (Z.ai Code)
+Task: Build 12 new 100% client-side tools and register them in tools-registry & tool-loader.
+
+Work Log:
+- Read context: last 100 lines of worklog (MORE-TOOLS stage already shipped 12 tools; total at 109), tools-registry.ts (109 tools), tool-loader.tsx (109 lazy imports), tool-page-shell.tsx (CopyButton, DownloadButton, ToolCardWrapper, EmptyState, FieldLabel helpers), csv-viewer.tsx + color-shade-generator.tsx + json-to-csv.tsx + jwt-decoder.tsx for reference patterns.
+- Installed `pdfjs-dist@6.3.289` via `bun add pdfjs-dist`; copied `node_modules/pdfjs-dist/build/pdf.worker.min.mjs` → `public/pdf.worker.min.mjs` so the worker can be loaded at runtime as `/pdf.worker.min.mjs`.
+- Tool 1 `csv-to-json.tsx` (developer): RFC-4180 CSV parser (handles quoted values, embedded delimiters). Auto-detect delimiter from first line (comma/semicolon/tab/pipe — highest count wins). Options: delimiter selector (auto/comma/semicolon/pipe), header-row toggle, trim-values toggle, infer-types toggle (numbers, booleans, null). Sample CSV loaded via button. File upload (≤5MB). Output rendered with react-syntax-highlighter Prism (oneDark). Stats tiles: rows, columns, detected delimiter. Copy + download JSON. Distinct from existing json-to-csv which is bidirectional — this one focuses on robust CSV→JSON with proper delimiter detection.
+- Tool 2 `text-escape-unescape.tsx` (developer): Tabs for HTML/URL/JSON String/SQL/Regex/Shell. Per tab: input textarea + Escape/Unescape buttons + editable output textarea + Copy. HTML escapes &<>"' to entities; URL uses encodeURIComponent/decodeURIComponent; JSON String escapes \"/\n\r\t\f\b and control chars (reversible via JSON.parse with safety fallback); SQL doubles single quotes; Regex escapes . * + ? ^ $ { } ( ) | [ ] \; Shell wraps in single quotes with '\'' escape for embedded quotes. Quick-reference grid showing HTML entities, regex specials, and shell examples.
+- Tool 3 `base64-to-file.tsx` (developer): Strips data: URI prefix automatically; tolerates whitespace/newlines in Base64. Magic-byte signature detection for PNG/JPEG/GIF/WebP/PDF/ZIP/GZIP/MP3/WAV/MP4/BMP/ICO/SVG. Stats: detected type, mime, size (B/KB/MB), byte count. Hex preview (first 256 bytes) shown in 16-byte rows with offset/hex/ASCII columns styled like xxd. Filename + extension inputs (extension auto-filled from detected type, defaults to .bin). Download as binary file. Clipboard paste button. Decode-error panel with rose styling.
+- Tool 4 `image-to-ascii.tsx` (image): Canvas pixel sampling with averaged luminance mapped to a charset. Width 20-200 chars; aspect ratio preserved with 0.5 vertical scale factor (chars are ~2x taller). 4 charset presets (standard ` .:-=+*#%@`, blocks `░▒▓█`, minimal ` .:#@`, custom — user enters string). Invert toggle reverses char order. ANSI color toggle embeds `\x1b[38;2;R;G;Bm` codes per pixel (24-bit foreground) — paste into a terminal to see colors. Output in `<pre>` with monospace zinc-950 background; live dimensions badge; copy as text + download .txt. Live regenerates on option change.
+- Tool 5 `image-color-quantizer.tsx` (image): Popularity quantization. Builds 5-bit/channel histogram (32768 bins), each bin tracks count + RGB sums. Top N bins by popularity become the palette; representative color = average of bin's pixels. Per-pixel remapping uses nearest-neighbor Euclidean RGB distance with a per-bucket LUT cache for speed. Transparent pixels (alpha < 16) are preserved. Slider 2-32 colors. Before/after side-by-side preview (max 600px dimension). Palette swatches grid (8 cols) with HEX + click-to-copy. Copy palette as HEX list. Download posterized PNG. 50ms debounce + busy spinner.
+- Tool 6 `css-flexbox-playground.tsx` (developer): Tabs: Container / Active item / Presets / CSS. Container controls: flex-direction (4), justify-content (6), align-items (5), flex-wrap (3), gap slider 0-48. Item count slider 1-8 (Add/Remove buttons). Per-item: flex-grow, flex-shrink, flex-basis (free text), align-self (6) — selected via numbered buttons or click item in preview. 6 preset layouts (Centered, Space between, Sidebar+content, Vertical stack, Equal columns, Card grid wrap) with mini previews. Live preview shows numbered colored boxes; active item gets ring highlight. Generated CSS in `<pre>` with Copy button, named .container and .item-N. Flexbox cheat sheet at bottom.
+- Tool 7 `border-radius-generator.tsx` (developer): 4 corner sliders (tl/tr/br/bl) in 2×2 grid with linked toggle (all corners same). 3 units (px/%/em); slider max adapts (200 for px/em, 100 for %). Live preview box on checkerboard bg with adjustable color (or outline-only mode). 8 preset shapes (Square, Circle, Pill, Squircle, Blob, Leaf, Wave, Card). Generated CSS `border-radius: T R B L;` with copy button. Per-corner badges.
+- Tool 8 `color-contrast-checker.tsx` (developer): WCAG 2.x contrast ratio via relative luminance formula `0.2126R + 0.7152G + 0.0722B` with sRGB linearization; ratio = `(L1+0.05)/(L2+0.05)`. Two color pickers (foreground/background) with hex input + rgb display. 4 WCAG pass/fail cards (AA Normal ≥4.5, AA Large ≥3, AAA Normal ≥7, AAA Large ≥4.5) with check/X icons. Live preview with adjustable font size (12-32px) showing sample text + secondary text on background color. Swap colors button. Smart color suggestions: if AA fails, generates up to 5 lighter/darker variants (delta steps of 8 in RGB) that pass AA ≥4.5; click to apply. WCAG reference panel.
+- Tool 9 `markdown-table-generator.tsx` (developer): Editable table with add/remove row+column buttons. Per-column alignment cycle button (left→center→right) with icon preview. Header-row toggle (Switch). Move-row-up/down arrows and move-col-left/right arrows. Auto-escapes pipes inside cells as `\|`; auto-pads columns to align pipes in source view; uses `:---`/`:--:`/`---:` separators. Live markdown output (Textarea, read-only) + rendered preview via react-markdown + remark-gfm. Copy + download .md. Column count + row count badges.
+- Tool 10 `text-stats-analyzer.tsx` (text): 6-tile basic stats grid (Characters, No-spaces, Words, Sentences, Paragraphs, Lines). Reading & speaking time cards (200 wpm / 130 wpm) with human-readable durations ("1m 30s"). Readability: Flesch Reading Ease (206.835 − 1.015×words/sentences − 84.6×syllables/words) with score-to-grade label (Very Easy→Very Difficult, color-coded) and Progress bar; Flesch-Kincaid Grade Level (0.39×words/sentences + 11.8×syllables/words − 15.59) with Progress bar. Syllable counter counts vowel groups per word (with silent-e heuristic). Complexity tiles: avg word length, avg sentence length, longest sentence, syllable count. Character breakdown: letters/digits/spaces/punctuation/special with horizontal bar visualization (relative to total). Formulas panel documenting both Flesch equations. Sample text button.
+- Tool 11 `html-to-markdown.tsx` (developer): DOMParser parses HTML; recursive DOM walker converts: h1-h6→# ##, p→paragraph, strong/b→**, em/i→*, del/s→~~, code→`, pre>code→```block``` (with language detection from class="language-xxx"), a→[text](href), img→![alt](src), ul/ol/li→- or 1. (with nested list recursion via depth tracking), blockquote→> quote, hr→---, table→markdown table (auto-escapes pipes, handles missing headers), input[checkbox]→[x] or [ ]. Inline tags (span/div/section/etc.) pass through children. Sample HTML button. Convert button triggers conversion (no live-update — prevents re-render loops). Live preview rendered via react-markdown. Copy + download .md. Conversion reference grid (15 supported mappings).
+- Tool 12 `pdf-to-images.tsx` (pdf): Uses pdfjs-dist v6 loaded dynamically on client (`useRef` + `useCallback` for the module, workerSrc set to `/pdf.worker.min.mjs`). Reads file as ArrayBuffer, getDocument() creates the PDF, getMetadata() extracts Title/Author/Subject/Creator. Per page: getPage(i) → getViewport(scale) → render to canvas → toBlob (PNG lossless or JPEG with white-bg fill) → store dataUrl + blob. Scale slider 0.5×-3×; JPEG quality slider 50-100% (disabled when PNG). Format select PNG/JPEG. Live thumbnail grid (2-4 cols responsive) with hover-overlay download button. Per-page download + "Download all as ZIP" (jszip) with `{stem}-page-001.png` naming. Live progress indicator while rendering multi-page PDFs. 50MB file size limit. PDF metadata card with title/author/subject/creator.
+- Registration: `tools-registry.ts` — added 12 entries in PDF (pdf-to-images), IMAGE (image-to-ascii, image-color-quantizer), TEXT (text-stats-analyzer), DEVELOPER (csv-to-json, text-escape-unescape, base64-to-file, css-flexbox-playground, border-radius-generator, color-contrast-checker, markdown-table-generator, html-to-markdown) blocks. Total: 109 → 121.
+- Registration: `tool-loader.tsx` — added 12 `dyn(() => import(...))` entries in matching category sections.
+
+Lint & Verification:
+- First lint run: 1252 problems (6 errors, 1246 warnings) — ALL from the copied `public/pdf.worker.min.mjs` (no-this-alias errors and unused-expression warnings in the third-party minified code).
+- Fix: Added `public/**` to eslint.config.mjs `ignores` array.
+- Second lint run: 0 errors, 0 warnings.
+- Dev server wasn't running initially; restarted via `setsid ./node_modules/.bin/next dev -p 3000`.
+- First HTTP test: all 12 routes returned 500 — root cause: `FileMarkdown` icon does not exist in lucide-react (correct name is `FileText`). Because tool-loader.tsx statically imports all tool components, the broken import broke the entire chunk, causing every /tools/<slug> route to 500.
+- Fix: Replaced `FileMarkdown` with `FileText` (already imported) in html-to-markdown.tsx — both in the import list and the JSX usage.
+- Final HTTP verification (all 200): csv-to-json, text-escape-unescape, base64-to-file, image-to-ascii, image-color-quantizer, css-flexbox-playground, border-radius-generator, color-contrast-checker, markdown-table-generator, text-stats-analyzer, html-to-markdown, pdf-to-images.
+- No runtime errors in dev log after the fix.
+
+Stage Summary:
+- 12 production-ready client-side tools shipped, all registered in tools-registry.ts and tool-loader.tsx. Total tool count: 109 → 121.
+- All 100% client-side — zero API routes, zero server-side logic. One new dependency added (pdfjs-dist@6.3.289, with its worker file copied to /public).
+- Followed project conventions: shadcn/ui (Button, Input, Textarea, Card, Tabs, Select, Switch, Checkbox, Label, Badge, Separator, Slider, ScrollArea, Table, Progress, Tooltip) + lucide-react icons + sonner toasts + ToolCardWrapper with `p-5 sm:p-6` + mobile-first responsive + `font-mono` for code/data + `'use client'` directive on all 12 tool components.
+- Color policy respected: NO indigo/blue. Primary emerald, with accents in amber, rose, violet, cyan, orange, pink, lime, teal.
+- No use of `.gradient-text` CSS class (known bug). Used `text-primary` and category colors for emphasis.
+- Only modified files: 12 new tool files in `/src/components/tools/`, plus `/src/lib/tools-registry.ts`, `/src/components/tool-loader.tsx`, `/eslint.config.mjs`, `/public/pdf.worker.min.mjs`, this worklog append, and the agent-ctx record.
+- Special features: RFC-4180 CSV parser with delimiter auto-detection; magic-byte file-type detection (13 formats); ANSI color codes for ASCII art; 5-bit histogram color quantization with LUT cache; interactive flexbox playground with 6 presets + per-item controls; WCAG contrast with smart color suggestions; visual markdown table editor with reordering; Flesch readability formulas with syllable counting; DOM-walking HTML→Markdown with nested list + table support; pdfjs-dist PDF rendering with per-page thumbnails + ZIP export.
+
+---
+Task ID: MORE-TOOLS-2-VERIFY
+Agent: Main (Z.ai Code)
+Task: Verify the 12 new tools added by subagent MORE-TOOLS-2 and confirm integration.
+
+Work Log:
+- Confirmed tool count in registry: 109 → 121 (12 new tools added).
+- Ran `bun run lint` → 0 errors, 0 warnings.
+- agent-browser smoke tested 5 representative new tools:
+  - /tools/css-flexbox-playground → 200, 0 errors
+  - /tools/color-contrast-checker → 200, 0 errors
+  - /tools/image-to-ascii → 200, 0 errors
+  - /tools/pdf-to-images → 200, 0 errors
+  - /tools/text-stats-analyzer → 200, 0 errors
+- Verified /browse page shows updated counts: All 121, PDF 11, Image 18, Text 17, Developer 28.
+
+Stage Summary:
+- 12 new tools successfully integrated and verified. Total tool count now 121 (was 109).
+- New dependency added: pdfjs-dist@6.3.289 for PDF-to-images rendering.
+- New tools span 4 categories: Developer (8 new), Image (2 new), Text (1 new), PDF (1 new).
+- All 100% client-side, lint clean, all routes return 200, browse page reflects new counts.
+- Developer Tools category is now the largest at 28 tools.

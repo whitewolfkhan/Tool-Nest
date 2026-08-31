@@ -26,6 +26,7 @@ const registry: Record<string, React.ComponentType> = {
   'pdf-page-numbers': dyn(() => import('@/components/tools/pdf-page-numbers')),
   'pdf-protect': dyn(() => import('@/components/tools/pdf-protect')),
   'image-to-pdf': dyn(() => import('@/components/tools/image-to-pdf')),
+  'pdf-to-images': dyn(() => import('@/components/tools/pdf-to-images')),
 
   // IMAGE
   'image-compress': dyn(() => import('@/components/tools/image-compress')),
@@ -44,6 +45,8 @@ const registry: Record<string, React.ComponentType> = {
   'image-to-favicon-set': dyn(() => import('@/components/tools/image-to-favicon-set')),
   'color-shade-generator': dyn(() => import('@/components/tools/color-shade-generator')),
   'image-collage-maker': dyn(() => import('@/components/tools/image-collage-maker')),
+  'image-to-ascii': dyn(() => import('@/components/tools/image-to-ascii')),
+  'image-color-quantizer': dyn(() => import('@/components/tools/image-color-quantizer')),
 
   // TEXT
   'word-counter': dyn(() => import('@/components/tools/word-counter')),
@@ -62,6 +65,7 @@ const registry: Record<string, React.ComponentType> = {
   'speech-to-text': dyn(() => import('@/components/tools/speech-to-text')),
   'text-repeater': dyn(() => import('@/components/tools/text-repeater')),
   'word-frequency-counter': dyn(() => import('@/components/tools/word-frequency-counter')),
+  'text-stats-analyzer': dyn(() => import('@/components/tools/text-stats-analyzer')),
 
   // DEVELOPER
   'json-formatter': dyn(() => import('@/components/tools/json-formatter')),
@@ -84,6 +88,14 @@ const registry: Record<string, React.ComponentType> = {
   'csv-viewer': dyn(() => import('@/components/tools/csv-viewer')),
   'css-gradient-generator': dyn(() => import('@/components/tools/css-gradient-generator')),
   'box-shadow-generator': dyn(() => import('@/components/tools/box-shadow-generator')),
+  'csv-to-json': dyn(() => import('@/components/tools/csv-to-json')),
+  'text-escape-unescape': dyn(() => import('@/components/tools/text-escape-unescape')),
+  'base64-to-file': dyn(() => import('@/components/tools/base64-to-file')),
+  'css-flexbox-playground': dyn(() => import('@/components/tools/css-flexbox-playground')),
+  'border-radius-generator': dyn(() => import('@/components/tools/border-radius-generator')),
+  'color-contrast-checker': dyn(() => import('@/components/tools/color-contrast-checker')),
+  'markdown-table-generator': dyn(() => import('@/components/tools/markdown-table-generator')),
+  'html-to-markdown': dyn(() => import('@/components/tools/html-to-markdown')),
 
   // CONVERTER
   'unit-converter': dyn(() => import('@/components/tools/unit-converter')),

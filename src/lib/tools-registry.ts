@@ -129,6 +129,7 @@ export const tools: Tool[] = [
   { slug: 'pdf-page-numbers', name: 'Add Page Numbers', description: 'Insert page numbers into PDF', category: 'pdf', clientSide: true, keywords: ['numbering', 'pages', 'pdf'] },
   { slug: 'pdf-protect', name: 'Protect PDF', description: 'Add password protection to PDF', category: 'pdf', clientSide: true, keywords: ['password', 'encrypt', 'pdf'] },
   { slug: 'image-to-pdf', name: 'Image to PDF', description: 'Convert JPG/PNG images into a PDF', category: 'pdf', popular: true, clientSide: true, keywords: ['jpg', 'png', 'convert'] },
+  { slug: 'pdf-to-images', name: 'PDF to Images', description: 'Convert PDF pages to PNG or JPEG images', category: 'pdf', clientSide: true, keywords: ['pdf', 'image', 'png', 'jpg'] },
 
   // ===== IMAGE =====
   { slug: 'image-compress', name: 'Compress Image', description: 'Reduce image file size while keeping quality', category: 'image', popular: true, clientSide: true, keywords: ['optimize', 'shrink', 'jpg', 'png'] },
@@ -147,6 +148,8 @@ export const tools: Tool[] = [
   { slug: 'image-to-favicon-set', name: 'Favicon Set Generator', description: 'Generate a complete favicon set from one image', category: 'image', clientSide: true, keywords: ['favicon', 'icons', 'website', 'manifest'] },
   { slug: 'color-shade-generator', name: 'Color Shade Generator', description: 'Generate tints and shades of a color (50-950 scale)', category: 'image', clientSide: true, keywords: ['color', 'shade', 'tint', 'tailwind'] },
   { slug: 'image-collage-maker', name: 'Image Collage Maker', description: 'Combine multiple images into a collage', category: 'image', clientSide: true, keywords: ['collage', 'grid', 'combine', 'images'] },
+  { slug: 'image-to-ascii', name: 'Image to ASCII Art', description: 'Convert an image to ASCII art text', category: 'image', clientSide: true, keywords: ['ascii', 'art', 'image', 'text'] },
+  { slug: 'image-color-quantizer', name: 'Image Color Quantizer', description: 'Reduce the number of colors in an image', category: 'image', clientSide: true, keywords: ['quantize', 'posterize', 'colors', 'reduce'] },
 
   // ===== TEXT =====
   { slug: 'word-counter', name: 'Word Counter', description: 'Count words, characters, sentences, paragraphs', category: 'text', popular: true, clientSide: true, keywords: ['count', 'characters', 'length'] },
@@ -165,6 +168,7 @@ export const tools: Tool[] = [
   { slug: 'speech-to-text', name: 'Speech to Text', description: 'Transcribe your voice to text using Web Speech API', category: 'text', clientSide: true, keywords: ['stt', 'voice', 'transcribe', 'dictation'] },
   { slug: 'text-repeater', name: 'Text Repeater', description: 'Repeat text multiple times with separators', category: 'text', clientSide: true, keywords: ['repeat', 'duplicate', 'loop'] },
   { slug: 'word-frequency-counter', name: 'Word Frequency Counter', description: 'Count frequency of each word and visualize', category: 'text', clientSide: true, keywords: ['word', 'frequency', 'count', 'analyze'] },
+  { slug: 'text-stats-analyzer', name: 'Text Stats Analyzer', description: 'Deep text statistics with readability scores', category: 'text', clientSide: true, keywords: ['text', 'stats', 'readability', 'flesch'] },
 
   // ===== DEVELOPER =====
   { slug: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate and minify JSON', category: 'developer', popular: true, clientSide: true, keywords: ['beautify', 'validate', 'parse'] },
@@ -187,6 +191,14 @@ export const tools: Tool[] = [
   { slug: 'csv-viewer', name: 'CSV Viewer', description: 'View, sort and filter CSV data as a table', category: 'developer', clientSide: true, keywords: ['csv', 'table', 'data', 'sort'] },
   { slug: 'css-gradient-generator', name: 'CSS Gradient Generator', description: 'Visual tool to create CSS gradients', category: 'developer', clientSide: true, keywords: ['css', 'gradient', 'design', 'background'] },
   { slug: 'box-shadow-generator', name: 'Box Shadow Generator', description: 'Visual tool to create CSS box shadows', category: 'developer', clientSide: true, keywords: ['css', 'box-shadow', 'design', 'shadow'] },
+  { slug: 'csv-to-json', name: 'CSV to JSON', description: 'Convert CSV data to JSON array with delimiter detection', category: 'developer', clientSide: true, keywords: ['csv', 'json', 'convert', 'parse'] },
+  { slug: 'text-escape-unescape', name: 'Text Escape / Unescape', description: 'Escape and unescape text for HTML, URL, JSON, SQL, regex, shell', category: 'developer', clientSide: true, keywords: ['escape', 'unescape', 'html', 'sql', 'regex'] },
+  { slug: 'base64-to-file', name: 'Base64 to File', description: 'Decode Base64 string back to a downloadable file', category: 'developer', clientSide: true, keywords: ['base64', 'decode', 'file', 'binary'] },
+  { slug: 'css-flexbox-playground', name: 'CSS Flexbox Playground', description: 'Interactive flexbox layout builder', category: 'developer', clientSide: true, keywords: ['css', 'flexbox', 'layout', 'playground'] },
+  { slug: 'border-radius-generator', name: 'Border Radius Generator', description: 'Visual CSS border-radius generator', category: 'developer', clientSide: true, keywords: ['css', 'border-radius', 'rounded', 'corners'] },
+  { slug: 'color-contrast-checker', name: 'Color Contrast Checker', description: 'Check WCAG contrast ratio between two colors', category: 'developer', clientSide: true, keywords: ['contrast', 'wcag', 'accessibility', 'color'] },
+  { slug: 'markdown-table-generator', name: 'Markdown Table Generator', description: 'Build markdown tables visually', category: 'developer', clientSide: true, keywords: ['markdown', 'table', 'grid'] },
+  { slug: 'html-to-markdown', name: 'HTML to Markdown', description: 'Convert HTML to Markdown format', category: 'developer', clientSide: true, keywords: ['html', 'markdown', 'convert'] },
 
   // ===== CONVERTER =====
   { slug: 'unit-converter', name: 'Unit Converter', description: 'Length, weight, temperature, volume', category: 'converter', popular: true, clientSide: true, keywords: ['metric', 'imperial'] },

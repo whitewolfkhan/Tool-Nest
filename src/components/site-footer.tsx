@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Wrench, Heart, Github, Twitter, Mail } from 'lucide-react'
+import { Wrench, Github, Twitter, Mail } from 'lucide-react'
 import { categories, totalToolsCount, getToolBySlug } from '@/lib/tools-registry'
 
 export function SiteFooter() {
@@ -102,8 +102,16 @@ export function SiteFooter() {
 
         <div className="mt-10 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} ToolNest. All tools run in your browser.</p>
-          <p className="flex items-center gap-1.5">
-            Made with <Heart className="h-3 w-3 fill-rose-500 text-rose-500" /> for everyone
+          <p>
+            Developed by{' '}
+            <a
+              href="https://meheerali.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground hover:text-primary transition-colors"
+            >
+              White-Wolf
+            </a>
           </p>
         </div>
       </div>

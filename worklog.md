@@ -914,3 +914,37 @@ Task: Fix CSV viewer mobile overflow + remove navbar search dropdown + add tool-
 
 Stage Summary:
 - All 3 issues fixed: CSV mobile overflow resolved, navbar search dropdown removed, tool-name marquee added.
+
+---
+Task ID: FIX-UI-3
+Agent: Main (Z.ai Code)
+Task: Remove duplicate search bar from homepage (two search filters → one).
+
+## Bug Description
+User reported: "there are two search filters. remove one" — the homepage showed both the navbar search AND the hero search, which was redundant.
+
+## Root Cause
+The homepage had two search bars visible at the same time:
+1. The **navbar search** (global, on every page) — "Search 135+ tools..."
+2. The **hero search** (homepage only, large prominent) — "Search for a tool... e.g. merge pdf..."
+
+Both navigated to /browse on submit, so they were functionally identical and visually redundant.
+
+## Fix
+Modified `/src/components/site-header.tsx` to hide the navbar search **only on the homepage** (where the hero search exists). On all other pages (tool pages, browse page, etc.), the navbar search remains available.
+
+Implementation:
+- Added `usePathname` from `next/navigation` to detect the current route.
+- Added `const isHome = pathname === '/'`.
+- Wrapped both the desktop search form and the mobile search form in `{!isHome && (...)}` conditional blocks.
+- Added a spacer `<div className="hidden md:block flex-1" />` when on home, so the right-side actions (Browse button, theme toggle, menu) stay properly aligned on desktop.
+- The navbar search still works normally on every non-home route (tool pages, /browse, 404, etc.).
+
+## Verification
+- `bun run lint`: 0 errors, 0 warnings.
+- agent-browser eval on homepage (`/`): `navbarSearchInputs: 0, heroSearchInputs: 1, totalSearchInputs: 1` — confirmed only ONE search bar.
+- agent-browser eval on `/tools/word-counter`: `navbarSearchInputs: 2` (desktop + mobile) — confirmed navbar search still works on other pages.
+- The hero search remains the focal point of the homepage; the navbar search is available everywhere else.
+
+Stage Summary:
+- Duplicate search filter removed from homepage. Now only one search bar shows on each page: the hero search on `/`, the navbar search on all other routes.

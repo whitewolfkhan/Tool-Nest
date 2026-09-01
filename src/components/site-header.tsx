@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Search, Wrench, Menu, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,8 +18,13 @@ import { tools, totalToolsCount } from '@/lib/tools-registry'
 
 export function SiteHeader() {
   const router = useRouter()
+  const pathname = usePathname()
   const [query, setQuery] = React.useState('')
   const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  // The homepage has its own large hero search — hide the navbar search there
+  // to avoid showing two search bars on the same screen.
+  const isHome = pathname === '/'
 
   // Search no longer shows a dropdown list — on submit it navigates to the
   // full browse page which has its own search/filter UI.
@@ -48,20 +53,25 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        {/* Desktop search — navigates to /browse on submit (no dropdown) */}
-        <form
-          onSubmit={handleSubmit}
-          className="relative hidden md:flex flex-1 max-w-md mx-2"
-          autoComplete="off"
-        >
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search ${totalToolsCount}+ tools...`}
-            className="pl-9 pr-3"
-          />
-        </form>
+        {/* Desktop search — hidden on homepage (which has its own hero search) */}
+        {!isHome && (
+          <form
+            onSubmit={handleSubmit}
+            className="relative hidden md:flex flex-1 max-w-md mx-2"
+            autoComplete="off"
+          >
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={`Search ${totalToolsCount}+ tools...`}
+              className="pl-9 pr-3"
+            />
+          </form>
+        )}
+
+        {/* Spacer to push the right-side actions over when the search is hidden on home */}
+        {isHome && <div className="hidden md:block flex-1" />}
 
         <div className="flex items-center gap-1 ml-auto">
           <Badge variant="secondary" className="hidden lg:inline-flex">
@@ -86,20 +96,22 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobile search — navigates to /browse on submit (no dropdown) */}
-      <div className="md:hidden px-4 pb-3">
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tools..."
-              className="pl-9 pr-3 h-10"
-            />
-          </div>
-        </form>
-      </div>
+      {/* Mobile search — hidden on homepage (which has its own hero search) */}
+      {!isHome && (
+        <div className="md:hidden px-4 pb-3">
+          <form onSubmit={handleSubmit} autoComplete="off">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search tools..."
+                className="pl-9 pr-3 h-10"
+              />
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Tool-name ticker (marquee) — scrolls left to right */}
       <div className="border-t border-border/60 bg-secondary/30 overflow-hidden">

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Wrench, Github, Twitter, Mail } from 'lucide-react'
+import { Wrench, Github, Mail, BookOpen } from 'lucide-react'
 import { categories, totalToolsCount, getToolBySlug } from '@/lib/tools-registry'
 
 export function SiteFooter() {
@@ -19,27 +19,31 @@ export function SiteFooter() {
               Free online tools for everyone. {totalToolsCount}+ tools across {categories.length} categories — no signup, no watermark, all in your browser.
             </p>
             <div className="mt-4 flex items-center gap-2">
-              <Link
-                href="#"
+              <a
+                href="https://github.com/whitewolfkhan"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-border hover:bg-accent transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="h-4 w-4" />
-              </Link>
-              <Link
-                href="#"
+              </a>
+              <a
+                href="https://dev.to/meheer_khan"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-border hover:bg-accent transition-colors"
-                aria-label="Twitter"
+                aria-label="Blog (dev.to)"
               >
-                <Twitter className="h-4 w-4" />
-              </Link>
-              <Link
-                href="#"
+                <BookOpen className="h-4 w-4" />
+              </a>
+              <a
+                href="mailto:meheercsecu@gmail.com"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-border hover:bg-accent transition-colors"
                 aria-label="Email"
               >
                 <Mail className="h-4 w-4" />
-              </Link>
+              </a>
             </div>
           </div>
 

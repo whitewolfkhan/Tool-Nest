@@ -948,3 +948,27 @@ Implementation:
 
 Stage Summary:
 - Duplicate search filter removed from homepage. Now only one search bar shows on each page: the hero search on `/`, the navbar search on all other routes.
+
+---
+Task ID: FIX-FOOTER-SOCIAL
+Agent: Main (Z.ai Code)
+Task: Update footer social links (GitHub, remove Twitter, add dev.to blog, email).
+
+Work Log:
+- Updated /src/components/site-footer.tsx social icon row:
+  - GitHub: href="https://github.com/whitewolfkhan" (target=_blank, rel=noopener)
+  - Removed Twitter icon entirely.
+  - Added Blog icon (BookOpen from lucide-react) linking to "https://dev.to/meheer_khan" (target=_blank).
+  - Email: href="mailto:meheercsecu@gmail.com".
+- Changed <Link> to <a> for external links (proper for cross-origin navigation + mailto).
+- Removed unused Twitter import; added BookOpen import.
+- Lint clean.
+
+Verification (agent-browser eval on footer a[aria-label]):
+- GitHub → https://github.com/whitewolfkhan, target=_blank ✅
+- Blog (dev.to) → https://dev.to/meheer_khan, target=_blank ✅
+- Email → mailto:meheercsecu@gmail.com ✅
+- Twitter: not present ✅
+
+Stage Summary:
+- Footer social links updated per user request. Twitter removed, GitHub + dev.to blog + email configured with the user's actual links.

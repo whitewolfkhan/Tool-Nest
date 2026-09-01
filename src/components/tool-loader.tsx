@@ -100,6 +100,7 @@ const registry: Record<string, React.ComponentType> = {
 
   // CONVERTER
   'unit-converter': dyn(() => import('@/components/tools/unit-converter')),
+  'currency-converter': dyn(() => import('@/components/tools/currency-converter')),
   'number-base-converter': dyn(() => import('@/components/tools/number-base-converter')),
   'color-converter': dyn(() => import('@/components/tools/color-converter-tool')),
   'roman-numeral-converter': dyn(() => import('@/components/tools/roman-numeral-converter')),

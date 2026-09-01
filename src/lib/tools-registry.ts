@@ -202,7 +202,8 @@ export const tools: Tool[] = [
   { slug: 'html-to-markdown', name: 'HTML to Markdown', description: 'Convert HTML to Markdown format', category: 'developer', clientSide: true, keywords: ['html', 'markdown', 'convert'] },
 
   // ===== CONVERTER =====
-  { slug: 'unit-converter', name: 'Unit Converter', description: 'Length, weight, temperature, volume', category: 'converter', popular: true, clientSide: true, keywords: ['metric', 'imperial'] },
+  { slug: 'unit-converter', name: 'Unit Converter', description: 'Length, weight, temperature, volume', category: 'converter', popular: true, clientSide: false, keywords: ['metric', 'imperial'] },
+  { slug: 'currency-converter', name: 'Currency Converter', description: 'Convert 130+ world currencies with live exchange rates', category: 'converter', popular: true, clientSide: false, keywords: ['currency', 'exchange', 'money', 'forex', 'usd', 'eur'] },
   { slug: 'number-base-converter', name: 'Number Base Converter', description: 'Convert binary, decimal, octal, hex', category: 'converter', clientSide: true, keywords: ['binary', 'hex', 'decimal'] },
   { slug: 'color-converter', name: 'Color Converter', description: 'HEX, RGB, HSL, CMYK conversion', category: 'converter', popular: true, clientSide: true, keywords: ['color', 'palette'] },
   { slug: 'roman-numeral-converter', name: 'Roman Numeral Converter', description: 'Convert numbers to Roman numerals', category: 'converter', clientSide: true, keywords: ['roman', 'numeral'] },

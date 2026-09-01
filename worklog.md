@@ -732,3 +732,31 @@ Rewrote the component to:
 Stage Summary:
 - Preview bug RESOLVED. The Markdown to PDF tool's Preview tab now shows fully rendered markdown (headings, paragraphs, lists, tables, code blocks, blockquotes).
 - PDF download still works via the hidden render ref's innerHTML.
+
+---
+Task ID: CURRENCY-CONVERTER
+Agent: Main (Z.ai Code)
+Task: Add Currency Converter with all world currencies.
+
+Work Log:
+- Created /src/components/tools/currency-converter.tsx (Currency Converter with live exchange rates).
+- Features:
+  - 120 world currencies (ISO 4217 codes) with flag emojis, names, and symbols.
+  - Live exchange rates via free open.er-api.com API (no API key required).
+  - Amount input, From/To currency selectors with searchable dropdown (search by code or name).
+  - Swap button to reverse the conversion.
+  - Live converted amount display with proper formatting (toLocaleString).
+  - Exchange rate shown both ways: "1 USD = 0.8614 EUR" and "1 EUR = 1.1606 USD".
+  - Refresh button with last-updated timestamp badge.
+  - Copy result button.
+  - Popular conversions grid (8 pairs: USD→EUR, USD→GBP, USD→JPY, USD→INR, USD→CNY, EUR→GBP, USD→PKR, USD→BDT).
+  - Conversion table showing 1 source currency → 20 popular target currencies with trend icons (up/down arrows).
+  - About section with disclaimer about rate accuracy.
+- Registered in tools-registry.ts (popular: true, category: converter) and tool-loader.tsx.
+- Verified: route returns HTTP 200, live rates fetched successfully (100 USD = 86.14 EUR confirmed), 0 console errors, lint clean.
+
+Stage Summary:
+- Currency Converter tool added. Total tools now 123 (was 122).
+- Supports 120 world currencies with live exchange rates.
+- Uses free open.er-api.com API (no key, no signup, CORS-enabled).
+- Searchable currency dropdown, swap functionality, popular pairs, conversion table.

@@ -19,7 +19,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Table,
   TableHeader,
@@ -398,15 +397,15 @@ export default function CsvViewer() {
           />
         ) : (
           <div className="rounded-md border border-border overflow-hidden">
-            <ScrollArea className="h-[460px] w-full">
-              <Table>
+            <div className="max-h-[460px] overflow-auto scrollbar-thin">
+              <Table className="min-w-max">
                 <TableHeader className="sticky top-0 z-10 bg-muted/95 backdrop-blur">
                   <TableRow className="hover:bg-muted/95">
                     <TableHead className="w-12 text-right text-xs text-muted-foreground">#</TableHead>
                     {headers.map((h, i) => (
                       <TableHead
                         key={i}
-                        className="cursor-pointer select-none whitespace-nowrap"
+                        className="cursor-pointer select-none whitespace-nowrap px-3"
                         onClick={() => toggleSort(i)}
                       >
                         <span className="inline-flex items-center gap-1.5">
@@ -430,13 +429,13 @@ export default function CsvViewer() {
                 <TableBody>
                   {sortedRows.map((row, ri) => (
                     <TableRow key={ri}>
-                      <TableCell className="text-xs text-muted-foreground text-right font-mono">
+                      <TableCell className="text-xs text-muted-foreground text-right font-mono px-3">
                         {ri + 1}
                       </TableCell>
                       {headers.map((_, ci) => (
                         <TableCell
                           key={ci}
-                          className="font-mono text-xs whitespace-nowrap"
+                          className="font-mono text-xs whitespace-nowrap px-3 py-2"
                         >
                           {row[ci] ?? ''}
                         </TableCell>
@@ -445,7 +444,7 @@ export default function CsvViewer() {
                   ))}
                 </TableBody>
               </Table>
-            </ScrollArea>
+            </div>
           </div>
         )}
       </ToolCardWrapper>

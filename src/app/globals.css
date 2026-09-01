@@ -164,6 +164,43 @@
     background-clip: border-box;
     -webkit-text-fill-color: currentcolor;
   }
+
+  /* Marquee — left-to-right scrolling animation for the tool-name ticker.
+     The track is duplicated so the loop is seamless: as the first copy
+     exits on the right, the second copy is already entering from the left. */
+  @keyframes marquee-ltr {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-ltr 60s linear infinite;
+  }
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6%,
+      black 94%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6%,
+      black 94%,
+      transparent
+    );
+  }
+
   /* Subtle grid background pattern */
   .bg-grid {
     background-image: linear-gradient(

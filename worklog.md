@@ -871,3 +871,46 @@ Stage Summary:
 - New dependency: gifenc@1.0.3 (for video-to-gif).
 - All tools are 100% client-side using Web Audio API, MediaRecorder, canvas.captureStream.
 - Browser limitations documented inline: WAV is universal audio output; WebM is universal video output; MP3/MP4 may not be available in all browsers.
+
+---
+Task ID: FIX-UI-2
+Agent: Main (Z.ai Code)
+Task: Fix CSV viewer mobile overflow + remove navbar search dropdown + add tool-name marquee.
+
+## Bug 1: CSV preview doesn't fit on mobile
+- **Root cause**: The CSV viewer used shadcn `ScrollArea` with `w-full` wrapping the `Table`. On mobile, the table was constrained to the container width, causing columns to squish or clip instead of scrolling horizontally.
+- **Fix** (`/src/components/tools/csv-viewer.tsx`):
+  - Replaced `<ScrollArea className="h-[460px] w-full">` with `<div className="max-h-[460px] overflow-auto scrollbar-thin">`.
+  - Added `min-w-max` to the `<Table>` so it maintains its natural width and scrolls horizontally instead of shrinking.
+  - Added `px-3 py-2` padding to cells for better mobile readability.
+  - Removed unused `ScrollArea` import.
+- **Result**: On mobile, the table now scrolls horizontally within its container; the sticky header stays pinned during vertical scroll.
+
+## Bug 2: Remove search dropdown from navbar
+- **Root cause**: The navbar search showed a dropdown list of up to 8 results as you typed.
+- **Fix** (`/src/components/site-header.tsx`):
+  - Removed the `open` state and the dropdown `<div>` blocks (both desktop and mobile).
+  - The search input now navigates to `/browse?q=<query>` on submit, where the full browse page handles search/filtering.
+  - Removed unused `searchTools`, `X`, `cn` imports.
+- **Result**: Typing in the navbar search no longer shows a dropdown; pressing Enter goes to the browse page.
+
+## Feature: Left-to-right marquee of all tool names
+- Added a scrolling ticker bar below the main navbar showing all 135 tool names as clickable links.
+- **Implementation**:
+  - Added `@keyframes marquee-ltr` + `.marquee-track` + `.marquee-mask` CSS to `/src/app/globals.css`.
+  - The track is duplicated (2 copies of the tool list) for a seamless infinite loop.
+  - Animation: `translateX(-50%) → translateX(0)` over 60s linear infinite = content moves left-to-right.
+  - Hover pauses the animation (`.marquee-track:hover { animation-play-state: paused }`).
+  - Edge fade mask via `mask-image` linear-gradient for a polished look.
+  - Each tool name is a `<Link>` to `/tools/<slug>` with a small dot bullet.
+  - 270 items total (135 × 2).
+
+## Verification
+- `bun run lint`: 0 errors, 0 warnings.
+- agent-browser eval confirmed: marquee track found with 270 items, animation `marquee-ltr` 60s, `hasSearchDropdown: false`.
+- VLM screenshot analysis confirmed: scrolling ticker visible, no search dropdown, header looks clean.
+- Typing "pdf" in search → no dropdown appears (`hasDropdown: false, dropdownVisible: false`).
+- CSV viewer route returns HTTP 200.
+
+Stage Summary:
+- All 3 issues fixed: CSV mobile overflow resolved, navbar search dropdown removed, tool-name marquee added.

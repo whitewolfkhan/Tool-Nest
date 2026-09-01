@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, Wrench, Menu, X, LayoutGrid } from 'lucide-react'
+import { Search, Wrench, Menu, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -14,25 +14,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { searchTools, totalToolsCount } from '@/lib/tools-registry'
-import { cn } from '@/lib/utils'
+import { tools, totalToolsCount } from '@/lib/tools-registry'
 
 export function SiteHeader() {
   const router = useRouter()
   const [query, setQuery] = React.useState('')
-  const [open, setOpen] = React.useState(false)
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const inputRef = React.useRef<HTMLInputElement>(null)
-  const results = React.useMemo(() => searchTools(query).slice(0, 8), [query])
 
+  // Search no longer shows a dropdown list — on submit it navigates to the
+  // full browse page which has its own search/filter UI.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const r = searchTools(query)[0]
-    if (r) {
-      router.push(`/tools/${r.slug}`)
+    const q = query.trim()
+    if (q) {
+      router.push(`/browse?q=${encodeURIComponent(q)}`)
       setQuery('')
-      setOpen(false)
       setMobileOpen(false)
+    } else {
+      router.push('/browse')
     }
   }
 
@@ -49,7 +48,7 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        {/* Desktop search */}
+        {/* Desktop search — navigates to /browse on submit (no dropdown) */}
         <form
           onSubmit={handleSubmit}
           className="relative hidden md:flex flex-1 max-w-md mx-2"
@@ -57,35 +56,11 @@ export function SiteHeader() {
         >
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            ref={inputRef}
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setOpen(e.target.value.length > 0)
-            }}
-            onFocus={() => setOpen(query.length > 0)}
-            onBlur={() => setTimeout(() => setOpen(false), 150)}
-            placeholder="Search 80+ tools..."
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${totalToolsCount}+ tools...`}
             className="pl-9 pr-3"
           />
-          {open && results.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-xl border border-border bg-popover shadow-lg overflow-hidden">
-              {results.map((t) => (
-                <Link
-                  key={t.slug}
-                  href={`/tools/${t.slug}`}
-                  onClick={() => {
-                    setQuery('')
-                    setOpen(false)
-                  }}
-                  className="flex flex-col px-3 py-2 hover:bg-accent transition-colors border-b last:border-b-0"
-                >
-                  <span className="text-sm font-medium">{t.name}</span>
-                  <span className="text-xs text-muted-foreground truncate">{t.description}</span>
-                </Link>
-              ))}
-            </div>
-          )}
         </form>
 
         <div className="flex items-center gap-1 ml-auto">
@@ -111,38 +86,29 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobile search */}
+      {/* Mobile search — navigates to /browse on submit (no dropdown) */}
       <div className="md:hidden px-4 pb-3">
-        <form onSubmit={handleSubmit} className="relative" autoComplete="off">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setOpen(e.target.value.length > 0)
-            }}
-            placeholder="Search tools..."
-            className="pl-9 pr-3 h-10"
-          />
-          {open && results.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-xl border border-border bg-popover shadow-lg overflow-hidden max-h-96 overflow-y-auto scrollbar-thin">
-              {results.map((t) => (
-                <Link
-                  key={t.slug}
-                  href={`/tools/${t.slug}`}
-                  onClick={() => {
-                    setQuery('')
-                    setOpen(false)
-                  }}
-                  className="flex flex-col px-3 py-2 hover:bg-accent transition-colors border-b last:border-b-0"
-                >
-                  <span className="text-sm font-medium">{t.name}</span>
-                  <span className="text-xs text-muted-foreground truncate">{t.description}</span>
-                </Link>
-              ))}
-            </div>
-          )}
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tools..."
+              className="pl-9 pr-3 h-10"
+            />
+          </div>
         </form>
+      </div>
+
+      {/* Tool-name ticker (marquee) — scrolls left to right */}
+      <div className="border-t border-border/60 bg-secondary/30 overflow-hidden">
+        <div className="marquee-mask">
+          <div className="marquee-track" aria-hidden="false">
+            <TickerItems />
+            <TickerItems />
+          </div>
+        </div>
       </div>
 
       {/* Mobile menu */}
@@ -168,5 +134,24 @@ export function SiteHeader() {
         </DialogContent>
       </Dialog>
     </header>
+  )
+}
+
+/** One copy of the tool-name ticker. Rendered twice for a seamless loop. */
+function TickerItems() {
+  return (
+    <div className="flex items-center shrink-0" role="list">
+      {tools.map((t) => (
+        <Link
+          key={t.slug}
+          href={`/tools/${t.slug}`}
+          role="listitem"
+          className="flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+        >
+          <span className="h-1 w-1 rounded-full bg-primary/40" />
+          <span className="font-medium">{t.name}</span>
+        </Link>
+      ))}
+    </div>
   )
 }

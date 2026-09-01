@@ -149,6 +149,22 @@ const registry: Record<string, React.ComponentType> = {
   'qr-code-reader': dyn(() => import('@/components/tools/qr-code-reader')),
   'invoice-generator': dyn(() => import('@/components/tools/invoice-generator')),
 
+  // AUDIO
+  'audio-trimmer': dyn(() => import('@/components/tools/audio-trimmer')),
+  'audio-compressor': dyn(() => import('@/components/tools/audio-compressor')),
+  'audio-converter': dyn(() => import('@/components/tools/audio-converter')),
+  'audio-volume-booster': dyn(() => import('@/components/tools/audio-volume-booster')),
+  'audio-merger': dyn(() => import('@/components/tools/audio-merger')),
+  'audio-recorder': dyn(() => import('@/components/tools/audio-recorder')),
+
+  // VIDEO
+  'video-trimmer': dyn(() => import('@/components/tools/video-trimmer')),
+  'video-compressor': dyn(() => import('@/components/tools/video-compressor')),
+  'video-converter': dyn(() => import('@/components/tools/video-converter')),
+  'video-to-gif': dyn(() => import('@/components/tools/video-to-gif')),
+  'video-frame-extractor': dyn(() => import('@/components/tools/video-frame-extractor')),
+  'video-resizer': dyn(() => import('@/components/tools/video-resizer')),
+
   // AI
   'ai-image-generator': dyn(() => import('@/components/tools/ai-image-generator')),
   'ai-content-writer': dyn(() => import('@/components/tools/ai-content-writer')),

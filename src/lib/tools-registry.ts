@@ -12,6 +12,8 @@ import {
   Hash,
   Link2,
   Binary,
+  Music,
+  Video,
 } from 'lucide-react'
 
 export interface Tool {
@@ -106,6 +108,22 @@ export const categories: Category[] = [
     icon: Hash,
     color: 'text-lime-500',
     gradient: 'from-lime-500/20 to-green-500/20',
+  },
+  {
+    id: 'audio',
+    name: 'Audio Tools',
+    description: 'Trim, cut, compress and convert audio files',
+    icon: Music,
+    color: 'text-fuchsia-500',
+    gradient: 'from-fuchsia-500/20 to-pink-500/20',
+  },
+  {
+    id: 'video',
+    name: 'Video Tools',
+    description: 'Trim, cut, compress and convert video files',
+    icon: Video,
+    color: 'text-teal-600',
+    gradient: 'from-teal-500/20 to-cyan-500/20',
   },
   {
     id: 'ai',
@@ -251,6 +269,22 @@ export const tools: Tool[] = [
   { slug: 'stopwatch', name: 'Stopwatch', description: 'Online stopwatch with laps', category: 'misc', clientSide: true, keywords: ['timer', 'count'] },
   { slug: 'qr-code-reader', name: 'QR Code Reader', description: 'Decode QR codes from images or camera', category: 'misc', clientSide: true, keywords: ['qr', 'decode', 'scan', 'barcode'] },
   { slug: 'invoice-generator', name: 'Invoice Generator', description: 'Create and print simple invoices', category: 'misc', clientSide: true, keywords: ['invoice', 'billing', 'pdf', 'business'] },
+
+  // ===== AUDIO =====
+  { slug: 'audio-trimmer', name: 'Audio Trimmer', description: 'Cut and trim audio files by start and end time', category: 'audio', popular: true, clientSide: true, keywords: ['audio', 'trim', 'cut', 'mp3', 'wav'] },
+  { slug: 'audio-compressor', name: 'Audio Compressor', description: 'Reduce audio file size by lowering bitrate', category: 'audio', popular: true, clientSide: true, keywords: ['audio', 'compress', 'reduce', 'mp3'] },
+  { slug: 'audio-converter', name: 'Audio Converter', description: 'Convert audio between MP3, WAV, OGG formats', category: 'audio', clientSide: true, keywords: ['audio', 'convert', 'mp3', 'wav', 'ogg'] },
+  { slug: 'audio-volume-booster', name: 'Audio Volume Booster', description: 'Increase or decrease audio volume', category: 'audio', clientSide: true, keywords: ['audio', 'volume', 'boost', 'amplify'] },
+  { slug: 'audio-merger', name: 'Audio Merger', description: 'Combine multiple audio files into one', category: 'audio', clientSide: true, keywords: ['audio', 'merge', 'join', 'combine'] },
+  { slug: 'audio-recorder', name: 'Audio Recorder', description: 'Record audio from your microphone', category: 'audio', clientSide: true, keywords: ['audio', 'record', 'microphone', 'voice'] },
+
+  // ===== VIDEO =====
+  { slug: 'video-trimmer', name: 'Video Trimmer', description: 'Cut and trim video by start and end time', category: 'video', popular: true, clientSide: true, keywords: ['video', 'trim', 'cut', 'mp4'] },
+  { slug: 'video-compressor', name: 'Video Compressor', description: 'Reduce video file size by lowering resolution', category: 'video', popular: true, clientSide: true, keywords: ['video', 'compress', 'reduce', 'mp4'] },
+  { slug: 'video-converter', name: 'Video Converter', description: 'Convert video to MP4 or WebM format', category: 'video', clientSide: true, keywords: ['video', 'convert', 'mp4', 'webm'] },
+  { slug: 'video-to-gif', name: 'Video to GIF', description: 'Convert video clips to animated GIF', category: 'video', clientSide: true, keywords: ['video', 'gif', 'convert', 'animated'] },
+  { slug: 'video-frame-extractor', name: 'Video Frame Extractor', description: 'Extract frames from a video as images', category: 'video', clientSide: true, keywords: ['video', 'frame', 'extract', 'image'] },
+  { slug: 'video-resizer', name: 'Video Resizer', description: 'Resize video to custom dimensions', category: 'video', clientSide: true, keywords: ['video', 'resize', 'scale', 'dimensions'] },
 
   // ===== AI =====
   { slug: 'ai-image-generator', name: 'AI Image Generator', description: 'Generate images from text prompts', category: 'ai', popular: true, clientSide: false, keywords: ['ai', 'generate', 'dalle'] },

@@ -760,3 +760,114 @@ Stage Summary:
 - Supports 120 world currencies with live exchange rates.
 - Uses free open.er-api.com API (no key, no signup, CORS-enabled).
 - Searchable currency dropdown, swap functionality, popular pairs, conversion table.
+
+---
+Task ID: AUDIO-VIDEO-TOOLS
+Agent: audio-video-tools-builder (Z.ai Code)
+Task: Build 12 media tools (6 audio + 6 video) — all 100% client-side using Web Audio API, MediaRecorder, HTML5 video/canvas, and AudioContext.
+
+Work Log:
+- Installed `gifenc` package for fast in-browser GIF encoding.
+- Created /src/lib/audio-utils.ts (shared helper) with:
+  - audioBufferToWav(): 16-bit PCM WAV encoder (44-byte RIFF header + interleaved samples, clamp to [-1,1] then int16).
+  - decodeAudioFile(): wraps AudioContext.decodeAudioData for any input format.
+  - sliceAudioBuffer(), concatenateAudioBuffers(): buffer manipulation helpers.
+  - formatTime(): mm:ss or hh:mm:ss.
+  - formatFileSize(): human-readable KB/MB/GB.
+  - pickSupportedMimeTypes(): probe MediaRecorder codec support.
+- Created /src/components/tools/audio-trimmer.tsx:
+  - Drag-drop upload, AudioContext decoding, canvas waveform with highlighted selection region.
+  - Start/end range sliders, play/pause + play-selection, real-time current-time badge.
+  - Trimmed export as 16-bit WAV, audio preview player.
+- Created /src/components/tools/audio-compressor.tsx:
+  - Sample rate presets (44100/22050/16000/11025/8000 Hz) + mono toggle.
+  - OfflineAudioContext for resampling, estimated output size + % savings preview.
+  - Compressed WAV export with original vs new size comparison.
+- Created /src/components/tools/audio-converter.tsx:
+  - Format selector: WAV (always works), WebM/Opus, MP3 (probed for support).
+  - WAV path uses direct encoding; WebM/MP3 paths record via MediaStreamDestination + MediaRecorder.
+  - Disabled-when-unsupported items shown in dropdown.
+- Created /src/components/tools/audio-volume-booster.tsx:
+  - Volume slider 0×–4× with live dB readout (-inf to +12 dB), preset buttons (-6/+3/+6/+12 dB).
+  - 10-second live preview regenerated on gain change (debounced) via OfflineAudioContext + GainNode.
+  - Full export as WAV.
+- Created /src/components/tools/audio-merger.tsx:
+  - Multi-file upload, draggable-free reorder (up/down arrows), per-file decode with loading states.
+  - Total duration + total size badges; concatenateAudioBuffers handles different channels/rates.
+  - Merged WAV download + inline preview.
+- Created /src/components/tools/audio-recorder.tsx:
+  - getUserMedia mic capture, MediaRecorder (WebM/Opus primary, MP4 fallback).
+  - Animated mic button with pulse rings driven by RMS level meter via AnalyserNode.
+  - Live timer, permission-error UI, WebM/M4A/OGN format auto-detection, download + discard.
+- Created /src/components/tools/video-trimmer.tsx:
+  - HTML5 <video> with native controls, start/end sliders with seek-on-change.
+  - Real-time MediaRecorder capture of canvas frames (capped at 1280 wide) + audio track from video.captureStream().
+  - Output as WebM (VP9/VP8 + Opus) with progress bar.
+- Created /src/components/tools/video-compressor.tsx:
+  - Resolution presets (original/1080/720/480/360/240p) + bitrate presets (0.5–8 Mbps).
+  - Estimated output size + % savings preview, real-time canvas + MediaRecorder re-encode.
+  - Live progress bar, WebM output with savings badge.
+- Created /src/components/tools/video-converter.tsx:
+  - Format selector: WebM VP9, WebM VP8, MP4 (H.264) — probed at runtime, disabled if unsupported.
+  - Browser support matrix detected via pickSupportedMimeTypes.
+  - Real-time re-encode via canvas + MediaRecorder + audio track passthrough.
+- Created /src/components/tools/video-to-gif.tsx:
+  - Custom time range toggle, FPS presets (5–24), width presets (auto/320/480/640/800 or custom).
+  - Frame extraction by seeking + canvas draw, GIF built with gifenc (quantize + applyPalette per frame).
+  - Live progress with frame count, inline GIF preview.
+- Created /src/components/tools/video-frame-extractor.tsx:
+  - Three extraction modes: evenly-spaced N frames, every Nth second, specific timestamps.
+  - Frame grid with thumbnails + per-frame download + "Download all as ZIP" via JSZip.
+  - Frame metadata (timestamp + index) overlay on each thumbnail.
+- Created /src/components/tools/video-resizer.tsx:
+  - Presets: Square (1080×1080), Portrait (1080×1920), Landscape (1920×1080), Custom.
+  - Width/height inputs with maintain-aspect-ratio switch.
+  - Real-time re-encode via canvas + MediaRecorder; WebM output at 4 Mbps.
+- THEME: Used fuchsia for audio tools, teal for video tools (no indigo/blue), with emerald accents for success/output states. No .gradient-text class used.
+- All 12 components use 'use client', ToolCardWrapper with p-5 sm:p-6, drag-drop zones with dashed borders, sonner toast feedback, loading spinners, progress bars, and EmptyState fallbacks.
+- All shadcn/ui components used existing variants (Button, Slider, Select, Switch, Input, Badge).
+- Fixed 2 ESLint warnings (unused eslint-disable directives) and 1 ESLint error (function-declaration ordering for `stopAll` in audio-recorder).
+
+Verification:
+- `bun run lint`: PASS — 0 errors, 0 warnings.
+- Dev server (port 3000) running cleanly with no compile errors.
+- All 12 routes return HTTP 200:
+  - /tools/audio-trimmer: 200
+  - /tools/audio-compressor: 200
+  - /tools/audio-converter: 200
+  - /tools/audio-volume-booster: 200
+  - /tools/audio-merger: 200
+  - /tools/audio-recorder: 200
+  - /tools/video-trimmer: 200
+  - /tools/video-compressor: 200
+  - /tools/video-converter: 200
+  - /tools/video-to-gif: 200
+  - /tools/video-frame-extractor: 200
+  - /tools/video-resizer: 200
+
+Stage Summary:
+- 12 media tools added (6 audio + 6 video). Total ToolNest tools now 135 (was 123).
+- All processing happens client-side via Web Audio API + OfflineAudioContext + MediaRecorder + Canvas.
+- Browser format limitations documented inline (browsers can decode anything but only encode WebM/MP4).
+- gifenc used for GIF encoding (fast, modern, MIT-licensed).
+- Theme stays on fuchsia (audio) + teal (video) + emerald (success) — no indigo/blue, no .gradient-text.
+
+---
+Task ID: AUDIO-VIDEO-VERIFY
+Agent: Main (Z.ai Code)
+Task: Verify the 12 audio+video tools added by subagent.
+
+Work Log:
+- Confirmed tool count: 123 → 135 (12 new tools added).
+- Added 2 new categories: audio (fuchsia) and video (teal — not indigo per color policy).
+- Ran `bun run lint` → 0 errors, 0 warnings.
+- All 12 new routes return HTTP 200.
+- agent-browser smoke tested 4 tools: audio-trimmer, video-trimmer, video-to-gif, audio-recorder — all render with 0 errors.
+- Verified /browse page shows: All 135, Audio Tools 6, Video Tools 6.
+
+Stage Summary:
+- 12 audio/video tools successfully integrated. Total tools now 135 (was 123).
+- New shared helper: /src/lib/audio-utils.ts (audioBufferToWav, decodeAudioFile, formatTime, formatFileSize).
+- New dependency: gifenc@1.0.3 (for video-to-gif).
+- All tools are 100% client-side using Web Audio API, MediaRecorder, canvas.captureStream.
+- Browser limitations documented inline: WAV is universal audio output; WebM is universal video output; MP3/MP4 may not be available in all browsers.

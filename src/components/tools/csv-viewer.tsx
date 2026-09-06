@@ -186,8 +186,8 @@ export default function CsvViewer() {
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File too large (max 5 MB)')
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error('File too large (max 20 MB)')
       return
     }
     const reader = new FileReader()

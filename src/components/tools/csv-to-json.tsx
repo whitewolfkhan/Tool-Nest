@@ -165,8 +165,8 @@ export default function CsvToJson() {
   function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
     if (!f) return
-    if (f.size > 5 * 1024 * 1024) {
-      toast.error('File too large (max 5 MB)')
+    if (f.size > 20 * 1024 * 1024) {
+      toast.error('File too large (max 20 MB)')
       return
     }
     const reader = new FileReader()

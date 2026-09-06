@@ -972,3 +972,29 @@ Verification (agent-browser eval on footer a[aria-label]):
 
 Stage Summary:
 - Footer social links updated per user request. Twitter removed, GitHub + dev.to blog + email configured with the user's actual links.
+
+---
+Task ID: FIX-CSV-MARQUEE
+Agent: Main (Z.ai Code)
+Task: Increase CSV upload limit to 20MB + speed up marquee animation.
+
+## Bug 1: CSV viewer upload limit too small (5MB → 20MB)
+- **Root cause**: csv-viewer.tsx and csv-to-json.tsx both hardcoded a 5MB limit (`file.size > 5 * 1024 * 1024`).
+- **Fix**: Changed to 20MB (`file.size > 20 * 1024 * 1024`) in both files, updated toast messages to "max 20 MB".
+- **Files**: src/components/tools/csv-viewer.tsx, src/components/tools/csv-to-json.tsx
+
+## Bug 2: Marquee animation too slow
+- **Root cause**: The tool-name ticker animation was set to 60s duration — too slow to feel lively.
+- **Fix**: Reduced animation duration from 60s to 25s in /src/app/globals.css (`.marquee-track`).
+- Now the ticker scrolls more than 2× faster.
+- Hover-to-pause behavior retained.
+
+## Verification
+- `bun run lint`: 0 errors, 0 warnings.
+- Source confirmed: `20 * 1024 * 1024` + "max 20 MB" in both CSV tool files.
+- agent-browser eval confirmed marquee duration: `25s` (was 60s).
+- Required hard-restart of dev server (Turbopack CSS hot-reload cache held stale 60s value).
+
+Stage Summary:
+- CSV upload limit increased from 5MB to 20MB (in both csv-viewer and csv-to-json tools).
+- Marquee animation speed doubled (60s → 25s).

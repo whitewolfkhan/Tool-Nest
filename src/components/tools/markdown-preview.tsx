@@ -82,7 +82,7 @@ export default function MarkdownPreview() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="# Type markdown here..."
-            className="min-h-[420px] resize-y font-mono text-sm"
+            className="min-h-[280px] sm:min-h-[420px] resize-y font-mono text-sm"
             spellCheck={false}
           />
         </div>
@@ -108,7 +108,7 @@ export default function MarkdownPreview() {
             </div>
           </div>
 
-          <div className="min-h-[420px] rounded-md border border-border bg-background overflow-auto">
+          <div className="min-h-[280px] sm:min-h-[420px] rounded-md border border-border bg-background overflow-auto">
             {view === 'preview' ? (
               <div
                 ref={previewRef}

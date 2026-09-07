@@ -155,8 +155,8 @@ export default function CompoundInterestCalculator() {
 
           <div className="mt-6">
             <h4 className="text-sm font-medium mb-3">Year-by-Year Breakdown</h4>
-            <div className="rounded-lg border border-border max-h-72 overflow-y-auto">
-              <Table>
+            <div className="rounded-lg border border-border max-h-72 overflow-auto scrollbar-thin">
+              <Table className="min-w-max">
                 <TableHeader className="sticky top-0 bg-background">
                   <TableRow>
                     <TableHead>Year</TableHead>

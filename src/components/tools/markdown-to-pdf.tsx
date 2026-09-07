@@ -495,13 +495,13 @@ export default function MarkdownToPdf() {
               value={markdown}
               onChange={(e) => setMarkdown(e.target.value)}
               placeholder="Type your Markdown here... # Heading, **bold**, *italic*, lists, tables, code blocks..."
-              className="font-mono min-h-[500px] text-sm leading-relaxed"
+              className="font-mono min-h-[280px] sm:min-h-[500px] text-sm leading-relaxed"
               spellCheck={false}
             />
           </TabsContent>
 
           <TabsContent value="preview">
-            <div className="md-preview min-h-[500px] rounded-md border border-border bg-white p-6 overflow-y-auto max-h-[600px] scrollbar-thin">
+            <div className="md-preview min-h-[280px] sm:min-h-[500px] rounded-md border border-border bg-white p-6 overflow-y-auto max-h-[600px] scrollbar-thin">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {markdown}
               </ReactMarkdown>

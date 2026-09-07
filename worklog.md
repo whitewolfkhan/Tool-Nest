@@ -998,3 +998,57 @@ Task: Increase CSV upload limit to 20MB + speed up marquee animation.
 Stage Summary:
 - CSV upload limit increased from 5MB to 20MB (in both csv-viewer and csv-to-json tools).
 - Marquee animation speed doubled (60s → 25s).
+
+---
+Task ID: MOBILE-FIX
+Agent: Main (Z.ai Code)
+Task: Audit and fix mobile responsiveness across ALL 135 tool components. Goal: every tool must look good and be fully usable on a 375px-wide mobile screen (iPhone SE size).
+
+Work Log:
+- Read last worklog entries (FIX-CSV-MARQUEE, FIX-FOOTER-SOCIAL) for context.
+- Ran systematic grep audits against /src/components/tools/ for:
+  - `w-[NNNpx]` fixed widths > 350px (none found above threshold; most are small `max-w-[260px]` for filenames).
+  - `min-w-[NNNpx]` (only css-flexbox-playground `min-w-[40px]` and markdown-table-generator `min-w-[120px]` on `<th>` — both fine).
+  - inline `width: NNNpx` (only invoice-generator print-HTML `.totals { width: 280px }` — used for PDF print, not visible mobile layout).
+  - `grid-cols-N` patterns: most are stat-card style `grid-cols-2 sm:grid-cols-4` (fine). Verified standalone `grid grid-cols-2` patterns are all either (a) tiny stat-card pairs (~2 items, fits at 375px) or (b) tabs (`grid w-full grid-cols-2` with `w-full`, fine).
+  - `<canvas>` elements: all canvas elements already use `max-w-full h-auto` or are hidden (rendering-only) canvases.
+  - `<Table>` / `<table>` elements: csv-viewer already correct (`min-w-max` + `overflow-auto`); invoice-generator, markdown-table-generator, text-diff already wrapped in `overflow-x-auto`.
+
+- **Fixes applied:**
+  1. **loan-emi-calculator.tsx** — Amortization table was missing horizontal scroll wrapper. Changed `<div className="... max-h-72 overflow-y-auto">` + bare `<Table>` → `<div className="... max-h-72 overflow-auto scrollbar-thin">` + `<Table className="min-w-max">`. On mobile the table now scrolls horizontally instead of overflowing the viewport.
+  2. **compound-interest-calculator.tsx** — Same fix on the Year-by-Year Breakdown table.
+  3. **word-frequency-counter.tsx** — Same fix on the word-frequency table.
+  4. **markdown-to-pdf.tsx** — `min-h-[500px]` on textarea and preview container was too tall on mobile (would push the settings card far below the fold). Reduced to `min-h-[280px] sm:min-h-[500px]` for both, preserving the desktop layout.
+  5. **markdown-to-html.tsx** — Same pattern: `min-h-[460px]` → `min-h-[280px] sm:min-h-[460px]` on both the input textarea and the output preview container.
+  6. **markdown-preview.tsx** — Same pattern: `min-h-[420px]` → `min-h-[280px] sm:min-h-[420px]` on both the input textarea and the output container.
+  7. **pdf-page-numbers.tsx** — `grid grid-cols-2 gap-4` (starting-number + font-color inputs) was forcing two side-by-side inputs at 375px (cramped). Changed to `grid grid-cols-1 sm:grid-cols-2 gap-4` so they stack on mobile.
+  8. **robots-txt-generator.tsx** — `<SelectTrigger className="w-[130px] mt-1">` in the user-agent rule editor was fixed at 130px even when its parent grid cell was full-width on mobile. Changed to `w-full sm:w-[130px] mt-1` so the Select takes full width on mobile and stays compact on desktop.
+
+- **Verification:**
+  - `bun run lint`: 0 errors, 0 warnings (only `$ eslint .` printed).
+  - Dev server confirmed running (GET /tools/<slug> 200 for all 135 tools, no compile errors in dev.log).
+  - Set agent-browser viewport to 375×812 (iPhone SE / iPhone 11 Pro) and visited every single one of the 135 tool routes. For each tool, evaluated `document.documentElement.scrollWidth > 375` to detect horizontal overflow.
+  - **Result: ALL 135 tools show `overflowX: false`** — no horizontal scrollbar, no overflow, content fits within 375px viewport.
+  - Spot-checked loan-emi-calculator with real input values (100000 / 6.5 / 20), csv-viewer with sample CSV loaded, and word-counter with multi-line text — all still pass overflow check and visually look correct on mobile.
+  - Screenshots saved to /tmp/loan-emi-mobile.png, /tmp/csv-viewer-mobile.png, /tmp/word-counter-mobile.png for reference.
+
+Common issues found and fixed (with examples):
+- **Tables missing horizontal scroll on mobile**: e.g. loan-emi-calculator's amortization table had `overflow-y-auto` only — added `overflow-x-auto` (via `overflow-auto scrollbar-thin`) plus `min-w-max` on the `<Table>` so column widths are preserved and the container scrolls horizontally instead of breaking the viewport.
+- **Oversized textareas / preview containers**: e.g. `min-h-[500px]` textareas consumed most of the mobile viewport before the user could see action buttons. Pattern `min-h-[280px] sm:min-h-[NNNpx]` keeps a reasonable mobile default while preserving desktop layout.
+- **Inputs forced into 2-column on mobile**: e.g. pdf-page-numbers used `grid-cols-2` for "starting number + font color" — inputs became too narrow. Pattern `grid-cols-1 sm:grid-cols-2` lets them stack on mobile.
+- **Fixed-width Select in a responsive grid cell**: e.g. robots-txt-generator used `w-[130px]` for the action Select; this works on desktop but looks tiny in a full-width mobile row. Pattern `w-full sm:w-[130px]` adapts.
+
+Items deliberately left unchanged (with reasoning):
+- Stat-card style grids `grid-cols-2 sm:grid-cols-4` (e.g. word-counter, audio-trimmer, video-trimmer, image-compress, bmi-calculator, temperature-converter, angle-converter, color-converter-tool) — two cards side-by-side at ~165px each fit fine on a 375px screen.
+- `grid-cols-7` in data-storage-converter for unit tabs — text is ultra-short ("b", "B", "KB", "MB", "GB", "TB", "PB"), 7 columns × ~47px fits without overflow.
+- `grid-cols-5` scientific-calculator button grid — buttons are `h-12 text-sm` (~54px wide × 48px tall on mobile), confirmed usable.
+- Tab toggles using `grid w-full grid-cols-2/3/7` — these spread tabs evenly across the full mobile width (no overflow).
+- All canvas elements already have `max-w-full h-auto` or are hidden rendering canvases.
+- All `<pre>` / `<code>` blocks already wrapped in `overflow-x-auto`.
+
+Stage Summary:
+- Audited ALL 135 tool components in /src/components/tools/ via grep + agent-browser viewport testing.
+- Fixed 8 specific issues across 7 files (loan-emi-calculator, compound-interest-calculator, word-frequency-counter, markdown-to-pdf, markdown-to-html, markdown-preview, pdf-page-numbers, robots-txt-generator).
+- All 135 tools verified at 375×812 viewport with zero horizontal overflow.
+- Lint clean (0 errors / 0 warnings). Dev server running cleanly with no compile errors.
+- No logic changes — only CSS class adjustments (`overflow-auto scrollbar-thin`, `min-w-max`, responsive `min-h-[...] sm:min-h-[...]`, `grid-cols-1 sm:grid-cols-2`, `w-full sm:w-[NNNpx]`).

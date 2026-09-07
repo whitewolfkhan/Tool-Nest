@@ -270,8 +270,8 @@ export default function WordFrequencyCounter() {
         {rows.length === 0 ? (
           <EmptyState message="No words to display. Try adjusting filters or pasting some text." />
         ) : (
-          <div className="max-h-96 overflow-y-auto rounded-md border border-border">
-            <Table>
+          <div className="max-h-96 overflow-auto scrollbar-thin rounded-md border border-border">
+            <Table className="min-w-max">
               <TableHeader className="sticky top-0 bg-muted/95 backdrop-blur z-10">
                 <TableRow>
                   <TableHead className="w-16">#</TableHead>

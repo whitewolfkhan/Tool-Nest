@@ -240,7 +240,7 @@ export default function RobotsTxtGenerator() {
                     updateRule(r.id, { rule: v })
                   }
                 >
-                  <SelectTrigger className="w-[130px] mt-1">
+                  <SelectTrigger className="w-full sm:w-[130px] mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

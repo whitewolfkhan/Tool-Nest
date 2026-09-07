@@ -174,7 +174,7 @@ export default function MarkdownToHtml() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="# Type Markdown here…"
-              className="min-h-[460px] resize-y font-mono text-sm"
+              className="min-h-[280px] sm:min-h-[460px] resize-y font-mono text-sm"
               spellCheck={false}
             />
           </div>
@@ -217,7 +217,7 @@ export default function MarkdownToHtml() {
               </div>
             </div>
 
-            <div className="min-h-[460px] rounded-md border border-border bg-background overflow-hidden flex flex-col">
+            <div className="min-h-[280px] sm:min-h-[460px] rounded-md border border-border bg-background overflow-hidden flex flex-col">
               {view === 'preview' ? (
                 <div className="flex-1 overflow-auto">
                   <div className="prose prose-sm dark:prose-invert max-w-none p-4 prose-headings:font-semibold prose-a:text-primary prose-code:before:hidden prose-code:after:hidden prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:text-xs">

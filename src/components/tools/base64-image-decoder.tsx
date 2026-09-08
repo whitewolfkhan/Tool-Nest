@@ -394,7 +394,7 @@ export default function Base64ImageDecoder() {
 
 function InfoTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border/60 bg-card/50 px-3 py-2">
+    <div className="min-w-0 rounded-md border border-border/60 bg-card/50 px-3 py-2">
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="text-sm font-medium font-mono truncate">{value}</div>
     </div>

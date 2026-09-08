@@ -137,7 +137,7 @@ export default function DataStorageConverter() {
         <div>
           <FieldLabel>From Unit</FieldLabel>
           <Tabs value={fromUnit} onValueChange={(v) => setFromUnit(v as Unit)}>
-            <TabsList className="grid grid-cols-7 h-9 w-full">
+            <TabsList className="flex h-9 w-full overflow-x-auto">
               {units.map((u) => (
                 <TabsTrigger key={u.id} value={u.id} className="text-xs px-1">
                   {u.short}

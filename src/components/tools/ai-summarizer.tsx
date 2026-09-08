@@ -199,7 +199,7 @@ export default function AiSummarizer() {
               </div>
             </div>
             <Card className="p-4 bg-background/50">
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                 {result.summary}
               </p>
             </Card>
@@ -226,7 +226,7 @@ export default function AiSummarizer() {
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
                       {i + 1}
                     </span>
-                    <span className="leading-relaxed">{p}</span>
+                    <span className="leading-relaxed min-w-0 break-words">{p}</span>
                   </li>
                 ))}
               </ul>

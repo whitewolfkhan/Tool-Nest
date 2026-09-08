@@ -89,7 +89,7 @@ export default function WordCounter() {
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
       <ToolCardWrapper>
-        <div className="flex items-center justify-between gap-2 mb-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
           <FieldLabel className="mb-0">Your text</FieldLabel>
           <div className="flex gap-2">
             <CopyButton text={text} label="Copy" />

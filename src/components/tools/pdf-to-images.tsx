@@ -328,9 +328,9 @@ export default function PdfToImages() {
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline gap-2">
+    <div className="flex min-w-0 items-baseline gap-2">
       <span className="text-muted-foreground shrink-0">{label}:</span>
-      <span className="font-medium truncate">{value}</span>
+      <span className="min-w-0 font-medium truncate">{value}</span>
     </div>
   )
 }

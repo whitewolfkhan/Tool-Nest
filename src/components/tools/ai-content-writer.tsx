@@ -253,7 +253,7 @@ export default function AiContentWriter() {
               <DownloadButton onClick={downloadAsTxt} label=".txt" />
             </div>
           </div>
-          <article className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap rounded-md border border-border bg-background/50 p-4 text-sm leading-relaxed">
+          <article className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap break-words rounded-md border border-border bg-background/50 p-4 text-sm leading-relaxed">
             {content}
           </article>
         </ToolCardWrapper>

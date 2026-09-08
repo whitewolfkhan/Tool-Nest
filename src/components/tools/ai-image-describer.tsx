@@ -228,7 +228,7 @@ export default function AiImageDescriber() {
               className="w-full sm:w-40 h-40 object-cover rounded-md border border-border bg-muted shrink-0"
             />
             <Card className="p-4 flex-1 bg-background/50">
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                 {result.description}
               </p>
             </Card>

@@ -184,7 +184,7 @@ export default function AiChatAssistant() {
               </Avatar>
               <div
                 className={cn(
-                  'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap break-words',
+                  'min-w-0 max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap break-words',
                   m.role === 'user'
                     ? 'bg-primary text-primary-foreground rounded-tr-sm'
                     : 'bg-muted text-foreground rounded-tl-sm'

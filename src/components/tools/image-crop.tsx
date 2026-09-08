@@ -409,10 +409,10 @@ export default function ImageCrop() {
                 />
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5 truncate">
+                <span className="flex min-w-0 items-center gap-1.5 truncate">
                   <ImageIcon className="h-3.5 w-3.5" /> {file.name}
                 </span>
-                <Badge variant="outline">
+                <Badge variant="outline" className="shrink-0">
                   {origW}×{origH}
                 </Badge>
               </div>

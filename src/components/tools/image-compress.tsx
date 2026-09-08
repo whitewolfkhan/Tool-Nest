@@ -177,8 +177,8 @@ export default function ImageCompress() {
                 <img src={originalUrl} alt="Original" className="w-full h-auto max-h-72 object-contain" />
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <ImageIcon className="h-3.5 w-3.5" />
-                <span className="truncate">{file.name}</span>
+                <ImageIcon className="h-3.5 w-3.5 shrink-0" />
+                <span className="min-w-0 truncate">{file.name}</span>
               </div>
             </div>
           )}

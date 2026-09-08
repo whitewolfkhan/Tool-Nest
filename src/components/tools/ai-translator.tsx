@@ -261,7 +261,7 @@ export default function AiTranslator() {
             </div>
           </div>
           <Card className="p-4 bg-background/50">
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
               {translation}
             </p>
           </Card>

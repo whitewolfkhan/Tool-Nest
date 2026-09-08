@@ -209,11 +209,11 @@ export default function ImageColorPalette() {
                 <img src={imageUrl} alt="Source" className="w-full h-auto max-h-72 object-contain" />
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5 truncate">
+                <span className="flex min-w-0 items-center gap-1.5 truncate">
                   <ImageIcon className="h-3.5 w-3.5" /> {file.name}
                 </span>
                 {isProcessing && (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex shrink-0 items-center gap-1.5">
                     <RefreshCw className="h-3 w-3 animate-spin" /> Analyzing...
                   </span>
                 )}

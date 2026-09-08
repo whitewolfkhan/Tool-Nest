@@ -20,6 +20,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    // Static info pages
+    ...['/about', '/privacy', '/terms', '/contact'].map((path) => ({
+      url: `${BASE_URL}${path}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+    })),
   ]
 
   // Each tool gets its own URL with high priority (these are the main content)

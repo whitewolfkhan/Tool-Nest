@@ -89,16 +89,16 @@ export function SiteFooter() {
             <h3 className="text-sm font-semibold mb-3">Company</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
+                <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+                <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
               </li>
             </ul>
           </div>

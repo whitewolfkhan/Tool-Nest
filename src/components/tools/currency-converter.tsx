@@ -1,19 +1,25 @@
 'use client'
 
 import * as React from 'react'
-import { ArrowRight, ArrowLeftRight, Search, RefreshCw, TrendingUp, TrendingDown } from 'lucide-react'
+import { ArrowRight, ArrowLeftRight, RefreshCw, TrendingUp, TrendingDown, Check, ChevronsUpDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 import {
   ToolCardWrapper,
   FieldLabel,
@@ -177,6 +183,100 @@ const POPULAR_PAIRS = [
   ['USD', 'BDT'],
 ]
 
+/* ------------------------------------------------------------------ */
+/*  Searchable currency picker (Popover + Command). A plain input      */
+/*  inside Radix Select misbehaves (focus/typeahead fights, keyboard  */
+/*  dismissal on mobile), so the dropdowns use a real combobox.       */
+/* ------------------------------------------------------------------ */
+function CurrencySelect({
+  value,
+  onChange,
+  search,
+  onSearchChange,
+}: {
+  value: string
+  onChange: (code: string) => void
+  search: string
+  onSearchChange: (q: string) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+  const selected = CURRENCY_MAP[value]
+  const q = search.trim().toLowerCase()
+  const filtered = q
+    ? CURRENCIES.filter(
+        (c) =>
+          c.code.toLowerCase().includes(q) ||
+          c.name.toLowerCase().includes(q)
+      )
+    : CURRENCIES
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o)
+        if (!o) onSearchChange('')
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="h-12 w-full justify-between text-base font-normal"
+        >
+          <span className="flex min-w-0 items-center gap-2 truncate">
+            <span className="shrink-0">{selected?.flag}</span>
+            <span className="font-medium">{selected?.code}</span>
+            <span className="hidden truncate text-muted-foreground sm:inline">
+              {selected?.name}
+            </span>
+          </span>
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-(--radix-popover-trigger-width) p-0"
+        align="start"
+      >
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Search currency..."
+            value={search}
+            onValueChange={onSearchChange}
+          />
+          <CommandList>
+            <CommandEmpty>No currencies found</CommandEmpty>
+            {filtered.map((c) => (
+              <CommandItem
+                key={c.code}
+                value={c.code}
+                keywords={[c.name]}
+                onSelect={() => {
+                  onChange(c.code)
+                  setOpen(false)
+                }}
+              >
+                <span className="mr-2 shrink-0">{c.flag}</span>
+                <span className="font-medium">{c.code}</span>
+                <span className="ml-2 truncate text-muted-foreground">
+                  {c.name}
+                </span>
+                <Check
+                  className={cn(
+                    'ml-auto h-4 w-4 shrink-0',
+                    value === c.code ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+              </CommandItem>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 export default function CurrencyConverter() {
   const [amount, setAmount] = React.useState('100')
   const [from, setFrom] = React.useState('USD')
@@ -231,16 +331,7 @@ export default function CurrencyConverter() {
     setTo(target)
   }
 
-  const filteredFrom = CURRENCIES.filter(
-    (c) =>
-      c.code.toLowerCase().includes(fromSearch.toLowerCase()) ||
-      c.name.toLowerCase().includes(fromSearch.toLowerCase())
-  )
-  const filteredTo = CURRENCIES.filter(
-    (c) =>
-      c.code.toLowerCase().includes(toSearch.toLowerCase()) ||
-      c.name.toLowerCase().includes(toSearch.toLowerCase())
-  )
+  // (CurrencySelect filters its own list internally.)
 
   return (
     <div className="space-y-4">
@@ -259,37 +350,12 @@ export default function CurrencyConverter() {
               className="text-lg h-12"
             />
             <FieldLabel>From</FieldLabel>
-            <Select value={from} onValueChange={setFrom} onOpenChange={(open) => { if (!open) setFromSearch('') }}>
-              <SelectTrigger className="h-12 text-base">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <div className="p-2 sticky top-0 bg-popover z-10">
-                  <Input
-                    placeholder="Search currency..."
-                    value={fromSearch}
-                    onChange={(e) => setFromSearch(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    autoFocus
-                    className="h-9"
-                  />
-                </div>
-                <div className="max-h-64 overflow-y-auto scrollbar-thin">
-                  {filteredFrom.length === 0 && (
-                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-                      No currencies found
-                    </div>
-                  )}
-                  {filteredFrom.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>
-                      <span className="mr-2">{c.flag}</span>
-                      <span className="font-medium">{c.code}</span>
-                      <span className="ml-2 text-muted-foreground">{c.name}</span>
-                    </SelectItem>
-                  ))}
-                </div>
-              </SelectContent>
-            </Select>
+            <CurrencySelect
+              value={from}
+              onChange={setFrom}
+              search={fromSearch}
+              onSearchChange={setFromSearch}
+            />
           </div>
 
           {/* Swap button */}
@@ -323,37 +389,12 @@ export default function CurrencyConverter() {
               </span>
             </div>
             <FieldLabel>To</FieldLabel>
-            <Select value={to} onValueChange={setTo} onOpenChange={(open) => { if (!open) setToSearch('') }}>
-              <SelectTrigger className="h-12 text-base">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <div className="p-2 sticky top-0 bg-popover z-10">
-                  <Input
-                    placeholder="Search currency..."
-                    value={toSearch}
-                    onChange={(e) => setToSearch(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    autoFocus
-                    className="h-9"
-                  />
-                </div>
-                <div className="max-h-64 overflow-y-auto scrollbar-thin">
-                  {filteredTo.length === 0 && (
-                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-                      No currencies found
-                    </div>
-                  )}
-                  {filteredTo.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>
-                      <span className="mr-2">{c.flag}</span>
-                      <span className="font-medium">{c.code}</span>
-                      <span className="ml-2 text-muted-foreground">{c.name}</span>
-                    </SelectItem>
-                  ))}
-                </div>
-              </SelectContent>
-            </Select>
+            <CurrencySelect
+              value={to}
+              onChange={setTo}
+              search={toSearch}
+              onSearchChange={setToSearch}
+            />
           </div>
         </div>
 

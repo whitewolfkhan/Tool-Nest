@@ -331,7 +331,6 @@ This project is open source and available under the **MIT License**.
 - [shadcn/ui](https://ui.shadcn.com) — for the excellent component library
 - [Lucide](https://lucide.dev) — for the beautiful icons
 - [Next.js team](https://nextjs.org) — for the incredible framework
-- [Z.ai](https://z.ai) — for the AI SDK powering the AI tools
 
 ---
 
@@ -339,6 +338,6 @@ This project is open source and available under the **MIT License**.
 
 **Built with ❤️ for everyone. Free forever.**
 
-[🌐 Website](https://toolnest.app) · [📦 GitHub](https://github.com/your-repo) · [💬 Issues](https://github.com/your-repo/issues)
+[🌐 Website](https://tool-nest-c.vercel.app) · [📦 GitHub](https://github.com/your-repo) · [💬 Issues](https://github.com/your-repo/issues)
 
 </div>

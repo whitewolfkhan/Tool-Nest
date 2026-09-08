@@ -259,7 +259,7 @@ export default function CurrencyConverter() {
               className="text-lg h-12"
             />
             <FieldLabel>From</FieldLabel>
-            <Select value={from} onValueChange={setFrom}>
+            <Select value={from} onValueChange={setFrom} onOpenChange={(open) => { if (!open) setFromSearch('') }}>
               <SelectTrigger className="h-12 text-base">
                 <SelectValue />
               </SelectTrigger>
@@ -269,10 +269,17 @@ export default function CurrencyConverter() {
                     placeholder="Search currency..."
                     value={fromSearch}
                     onChange={(e) => setFromSearch(e.target.value)}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    autoFocus
                     className="h-9"
                   />
                 </div>
                 <div className="max-h-64 overflow-y-auto scrollbar-thin">
+                  {filteredFrom.length === 0 && (
+                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                      No currencies found
+                    </div>
+                  )}
                   {filteredFrom.map((c) => (
                     <SelectItem key={c.code} value={c.code}>
                       <span className="mr-2">{c.flag}</span>
@@ -316,7 +323,7 @@ export default function CurrencyConverter() {
               </span>
             </div>
             <FieldLabel>To</FieldLabel>
-            <Select value={to} onValueChange={setTo}>
+            <Select value={to} onValueChange={setTo} onOpenChange={(open) => { if (!open) setToSearch('') }}>
               <SelectTrigger className="h-12 text-base">
                 <SelectValue />
               </SelectTrigger>
@@ -326,10 +333,17 @@ export default function CurrencyConverter() {
                     placeholder="Search currency..."
                     value={toSearch}
                     onChange={(e) => setToSearch(e.target.value)}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    autoFocus
                     className="h-9"
                   />
                 </div>
                 <div className="max-h-64 overflow-y-auto scrollbar-thin">
+                  {filteredTo.length === 0 && (
+                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                      No currencies found
+                    </div>
+                  )}
                   {filteredTo.map((c) => (
                     <SelectItem key={c.code} value={c.code}>
                       <span className="mr-2">{c.flag}</span>
